@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import setuptools
 from os import path
-
+from pip.req import parse_requirements
 from metaappscriptsdk import info
 
 here = path.abspath(path.dirname(__file__))
@@ -15,12 +15,11 @@ packages = [
     'metaappscriptsdk.logger',
 ]
 
-setup_requires = [
-    'starter_api',
-    'elasticsearch',
-    'jsonklog',
-    'fluent-logger'
-]
+install_reqs = parse_requirements(path.join(here, 'requirements.txt'), session=False)
+
+# reqs is a list of requirement
+# e.g. ['django==1.5.1', 'mezzanine==1.4.6']
+reqs = [str(ir.req) for ir in install_reqs]
 
 setuptools.setup(
     name=info.__package_name__,
@@ -41,7 +40,7 @@ setuptools.setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
     ],
-    setup_requires=setup_requires,
+    install_requires=reqs,
     packages=packages,
     package_data={'': ['LICENSE']},
     package_dir={'metaappscriptsdk': 'metaappscriptsdk'},
