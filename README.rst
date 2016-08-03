@@ -19,7 +19,7 @@ Usage
 
     # Инициализация приложения
     # конфигурирует логгер и пр.
-    META = MetaApp(debug=True)  # debug для того, чтобы не писать логи в службу логирования
+    META = MetaApp(service_id='MyService', debug=True)  # debug для того, чтобы не писать логи в службу логирования
 
     # работает стандартный логгер
     logging.info('Hello, from Meta App Script!')
