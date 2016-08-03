@@ -15,6 +15,13 @@ packages = [
     'metaappscriptsdk.logger',
 ]
 
+setup_requires = [
+    'starter_api',
+    'elasticsearch',
+    'jsonklog',
+    'fluent-logger'
+]
+
 setuptools.setup(
     name=info.__package_name__,
     version=info.__version__,
@@ -34,7 +41,7 @@ setuptools.setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
     ],
-
+    setup_requires=setup_requires,
     packages=packages,
     package_data={'': ['LICENSE']},
     package_dir={'metaappscriptsdk': 'metaappscriptsdk'},
