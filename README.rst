@@ -54,7 +54,7 @@ Logger
 
 Это выведет вам что-то вроде такого:
 
-.. code-block:: python
+.. highlight:: none
 
     00:03:11:WARNING: Do warning log {'count': 1, 'mycontextParam': [1, 3, 4], 'test': True, 'campaign_id': -1}
     00:03:11:INFO: Info log {'test': True, 'campaign_id': -1}
