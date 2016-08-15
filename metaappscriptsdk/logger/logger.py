@@ -25,6 +25,11 @@ class Logger:
             context = {}
         logging.warning(msg, extra={'context': context})
 
+    def error(self, msg, context=None):
+        if context is None:
+            context = {}
+        logging.error(msg, extra={'context': context})
+
     def critical(self, msg, context=None):
         if context is None:
             context = {}
