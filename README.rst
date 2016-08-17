@@ -108,6 +108,7 @@ Bulk Logger Thread Pool
 Делает запись в лог только если прошло определенное кол-во времени
 
 .. code-block:: python
+
     # coding=utf-8
     import time
     from functools import partial
