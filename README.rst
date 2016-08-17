@@ -79,10 +79,10 @@ Bulk Logger
         # Первый вызов всегда try_log_part, чтобы ознаменовать начало выполнения цикла
         bulk_log.try_log_part()
 
-        # На частых, но возможно долгих процессах можете использовать параметр with_start_message=False
+        # На ЧАСТЫХ, но возможно БЫСТРЫХ процессах можете использовать параметр with_start_message=False
         # Это исключит запись надписи о начале работы над пачкой и, если пачка сделается до
         # мин. время логирования, то записи не произойдет вообще
-        bulk_log.try_log_part(with_start_message=False)
+        # bulk_log.try_log_part(with_start_message=False)
 
         # далее ваша бизнес-логика
         time.sleep(1)
@@ -99,3 +99,60 @@ Bulk Logger
     # 23:56:31:INFO: Моя пачка {'counter': 61, 'percentDone': 48, 'maxCount': 125}
     # 23:57:31:INFO: Моя пачка {'counter': 121, 'percentDone': 96, 'maxCount': 125}
     # 23:57:36:INFO: Закончили цикл: Моя пачка {}
+
+
+
+Bulk Logger Thread Pool
+=====
+Используется для логирования пачек из обрабатываемого списка.
+Делает запись в лог только если прошло определенное кол-во времени
+
+.. code-block:: python
+    # coding=utf-8
+    import time
+    from functools import partial
+    from multiprocessing.pool import ThreadPool
+
+    from metaappscriptsdk import MetaApp
+
+    META = MetaApp(service_id="UnitTestService", debug=False)
+
+
+    def my_thread_fn(bulk_log, job_item):
+        bulk_log.try_log_part()
+        # Бизнес логика
+        # работа с job_item
+        time.sleep(1)
+
+
+    def my_main_fn():
+        total = 125 * 2
+        thread_cnt = 2
+
+        bulk_log = META.bulk_log(u'Моя пачка', total, 1)
+        bulk_log.try_log_part()
+
+        all_data = range(1, total)
+        pool = ThreadPool(thread_cnt)
+
+        # Чтобы работать в многопоточном режиме с bulk_log вы
+        # должны передать его как аргемент вызываемой функции таким образом
+        func = partial(my_thread_fn, bulk_log)
+        results = pool.map(func, all_data)
+
+        bulk_log.finish()
+        pool.close()
+        pool.join()
+        #print(results)
+
+    my_main_fn()
+
+
+Это выведет вам что-то вроде такого:
+
+.. code-block:: python
+
+    # 16:25:08:INFO: Начали цикл: Моя пачка {}
+    # 16:26:08:INFO: Моя пачка {'counter': 122, 'percentDone': 48, 'maxCount': 250}
+    # 16:27:09:INFO: Моя пачка {'counter': 242, 'percentDone': 96, 'maxCount': 250}
+    # 16:27:17:INFO: Закончили цикл: Моя пачка {}
