@@ -26,7 +26,7 @@ def my_main_fn():
     pool = ThreadPool(thread_cnt)
 
     # Чтобы работать в многопоточном режиме с bulk_log вы
-    # должны передать его как аргемент вызываемой функции таким образом
+    # должны передать его как аргумент вызываемой функции таким образом
     func = partial(my_thread_fn, bulk_log)
     results = pool.map(func, all_data)
 
