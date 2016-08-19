@@ -1,13 +1,13 @@
 # coding=utf-8
 import os
+import sys
 
 import starter_api as starter_api
-import sys
 
 from metaappscriptsdk.logger import create_logger
 from metaappscriptsdk.logger.bulk_logger import BulkLogger
 from metaappscriptsdk.logger.logger import Logger
-from metaappscriptsdk.starter.worker import Worker
+from metaappscriptsdk.worker import Worker
 
 
 class MetaApp(object):
