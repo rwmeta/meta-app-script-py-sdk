@@ -1,10 +1,11 @@
 # coding=utf-8
 
+from __future__ import print_function
 import logging
-
-import sys
+import traceback
 
 from metaappscriptsdk.logger.custom_fluent import FluentHandler, FluentRecordFormatter
+import sys
 
 # http://stackoverflow.com/questions/11029717/how-do-i-disable-log-messages-from-the-requests-library
 # Отключаем логи от бибилиотеки requests
@@ -13,6 +14,11 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 LOGGER_ENTITY = {}
 
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
 def create_logger(service_id=None, debug=True):
     if not service_id:
         service_id = 'unknown'
@@ -20,7 +26,7 @@ def create_logger(service_id=None, debug=True):
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
     ch = logging.StreamHandler(sys.stdout)
-    formatter = StdoutFormatter('%(asctime)s:%(levelname)s: %(message)s %(context)s',  datefmt="%H:%M:%S")
+    formatter = StdoutFormatter('%(asctime)s:%(levelname)s: %(message)s %(context)s', datefmt="%H:%M:%S")
     ch.setFormatter(formatter)
 
     root_logger.addHandler(ch)
@@ -46,7 +52,16 @@ class StdoutFormatter(logging.Formatter, object):
             record.asctime = self.formatTime(record, self.datefmt)
         dict__ = record.__dict__
         dict__.setdefault('context', {})
-        dict__.get('context').update(LOGGER_ENTITY)
+        context = dict__.get('context')
+        context.update(LOGGER_ENTITY)
+        ex = context.get("e")
+        if ex:
+            context.update({'e': {
+                'class': ex.__class__,
+                'message': str(ex),
+                'trace': str(traceback.format_exc()),
+            }})
+            eprint(str(ex) + "\n" + str(traceback.format_exc()))
         s = self._fmt % dict__
         if record.exc_info:
             # Cache the traceback text to avoid converting it multiple times

@@ -3,7 +3,7 @@ import time
 
 from metaappscriptsdk import MetaApp
 
-META = MetaApp(service_id="UnitTestService", debug=False)
+META = MetaApp()
 
 # Станартный вариант
 total = 125

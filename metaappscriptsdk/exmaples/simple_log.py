@@ -1,7 +1,7 @@
 from metaappscriptsdk import MetaApp
 import logging
 
-META = MetaApp(service_id="UnitTestService", debug=False)
+META = MetaApp()
 log = META.log
 
 log.set_entity('campaign_id', -1)

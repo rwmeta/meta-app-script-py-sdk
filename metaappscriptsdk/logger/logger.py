@@ -10,7 +10,10 @@ class Logger:
     """
 
     def set_entity(self, key, value):
-        LOGGER_ENTITY[key] = value
+        if value is None:
+            self.remove_entity(key)
+        else:
+            LOGGER_ENTITY[key] = value
 
     def remove_entity(self, key):
         LOGGER_ENTITY.pop(key, None)

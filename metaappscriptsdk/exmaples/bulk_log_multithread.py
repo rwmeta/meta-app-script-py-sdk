@@ -5,7 +5,7 @@ from multiprocessing.pool import ThreadPool
 
 from metaappscriptsdk import MetaApp
 
-META = MetaApp(service_id="UnitTestService", debug=False)
+META = MetaApp()
 
 
 def my_thread_fn(bulk_log, job_item):

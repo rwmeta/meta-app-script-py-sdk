@@ -8,6 +8,12 @@ Install
 pip install metaappscriptsdk
 
 
+Full Examples
+=============
+
+`Полный список примеров
+<https://github.com/rw-meta/meta-app-script-py-sdk/tree/master/metaappscriptsdk/examples/>`_
+
 Usage
 =====
 .. code-block:: python
@@ -19,7 +25,7 @@ Usage
 
     # Инициализация приложения
     # конфигурирует логгер и пр.
-    META = MetaApp(service_id='MyService', debug=True)  # debug для того, чтобы не писать логи в службу логирования
+    META = MetaApp()
 
     # работает стандартный логгер
     logging.info('Hello, from Meta App Script!')
@@ -116,7 +122,7 @@ Bulk Logger Thread Pool
 
     from metaappscriptsdk import MetaApp
 
-    META = MetaApp(service_id="UnitTestService", debug=False)
+    META = MetaApp()
 
 
     def my_thread_fn(bulk_log, job_item):
