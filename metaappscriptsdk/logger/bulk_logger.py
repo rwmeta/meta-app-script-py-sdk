@@ -27,10 +27,10 @@ class BulkLogger:
         self.__counter += 1
         if time.time() - self.__begin_time > self.__part_log_time_seconds:
             self.__begin_time = time.time()
-            context['counter'] = self.__counter
+            context['count'] = self.__counter
             if self.__total:
                 context['percentDone'] = int(self.__counter * 100 / self.__total)
-                context['maxCount'] = self.__total
+                context['total'] = self.__total
             self.__log.info(msg=self.__log_message, context=context)
             return True
         elif self.__counter == 1:
