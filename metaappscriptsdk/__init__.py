@@ -2,6 +2,7 @@
 import os
 import sys
 
+import select
 import starter_api as starter_api
 
 from metaappscriptsdk.logger import create_logger
@@ -48,7 +49,7 @@ class MetaApp(object):
         self.starter_api_url = starter_api_url
         starter_api.init(self.starter_api_url)
 
-        if sys.stdin.isatty():
+        if select.select([sys.stdin, ], [], [], 0.0)[0]:
             print("Waiting stdin...")
             stdin = ''.join(sys.stdin.readlines())
         else:
