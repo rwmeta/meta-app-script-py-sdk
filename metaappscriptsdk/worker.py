@@ -25,7 +25,10 @@ class Worker:
         self.__run(main_fn, 'ignore')
 
     def __run(self, main_fn, resolver_type):
-        tasks = self.debug_tasks
+        tasks = []
+        if self.__app.debug:
+            tasks = self.debug_tasks
+
         if not tasks:
             tasks = self.__raw_tasks
         if not tasks:
