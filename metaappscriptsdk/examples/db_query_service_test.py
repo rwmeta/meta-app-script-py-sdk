@@ -1,7 +1,7 @@
 # coding=utf-8
 from metaappscriptsdk import MetaApp, pretty_json
 
-META = MetaApp(meta_url="http://eap.meta.realweb.ru")
+META = MetaApp()
 log = META.log
 
 db_adplatform = META.db("adplatform")
@@ -19,7 +19,6 @@ for r in dr['rows']:
     print(u"r['id'] = %s" % r['id'])
     print(u"r['name'] = %s" % r['name'])
     print(u"r['info'] = %s" % pretty_json(r['info']))
-
 
 db_adhands_ui = META.db("adhands_ui")
 dr = db_adhands_ui.query("""

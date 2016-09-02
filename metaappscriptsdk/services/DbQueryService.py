@@ -1,10 +1,7 @@
 # coding=utf-8
 import json
 
-import requests
-from postgres import Postgres
-
-from metaappscriptsdk.services import process_meta_api_error_code, api_call
+from metaappscriptsdk.services import api_call
 
 
 class DbQueryService:
