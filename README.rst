@@ -163,3 +163,111 @@ Bulk Logger Thread Pool
     # 16:26:08:INFO: Моя пачка {'counter': 122, 'percentDone': 48, 'maxCount': 250}
     # 16:27:09:INFO: Моя пачка {'counter': 242, 'percentDone': 96, 'maxCount': 250}
     # 16:27:17:INFO: Закончили цикл: Моя пачка {}
+
+
+
+RPC Meta Services
+=====
+
+
+.. code-block:: python
+
+    # coding=utf-8
+    import base64
+
+    from metaappscriptsdk import MetaApp, pretty_json
+
+    META = MetaApp()
+    log = META.log
+
+    # Получаете инстанс сервиса и делаете запрос к нему
+    result = META.MediaService.persist_one(
+        file_base64_content=base64.b64encode("Hello, from META!"),
+        filename="req.txt",
+        extension="txt",
+        mime="plain/text",
+        is_private=False,
+        origin="ROBOT",
+    )
+    # Формат ответа стандартный для меты
+    first = result['rows'][0]
+    print(u"result['rows'][0]['url'] = %s" % first['url'])
+    print(u"first = %s" % first)
+    print(u"result = %s" % pretty_json(result))
+
+
+
+Это выведет вам что-то вроде такого:
+
+.. code-block:: python
+
+    #16:48:19:INFO: Читаем настройки разработчика из локального файла {'path': '/Users/arturgspb/.rwmeta/developer_settings.json'}
+    #16:48:19:INFO: Инициализация службы {'debug': True}
+    #Empty stdin...
+    #result['rows'][0]['url'] = http://localhost:8080/media/d/c6509ac7-b410-4f77-8f0b-7c1dfd6a871b
+    #first = {u'url': u'http://localhost:8080/media/d/c6509ac7-b410-4f77-8f0b-7c1dfd6a871b', u'id': u'c6509ac7-b410-4f77-8f0b-7c1dfd6a871b', u'full_path': u'/mnt/static/public/74/reqtxt-2016-09-02_16-48-19-(4501).txt'}
+    #result = {
+    #    "boxed": false,
+    #    "columns": [
+    #        {
+    #            "displayName": "Id",
+    #            "fullDisplayName": "Id",
+    #            "isPrimary": true,
+    #            "isStyled": false,
+    #            "name": "id",
+    #            "role": "dimension",
+    #            "type": "TEXT"
+    #        },
+    #        {
+    #            "displayName": "url",
+    #            "fullDisplayName": "url",
+    #            "isStyled": true,
+    #            "name": "url",
+    #            "role": "dimension",
+    #            "type": "TEXT"
+    #        },
+    #        {
+    #            "displayName": "downloadUrlPart",
+    #            "fullDisplayName": "downloadUrlPart",
+    #            "isStyled": true,
+    #            "name": "downloadUrlPart",
+    #            "role": "dimension",
+    #            "type": "TEXT"
+    #        },
+    #        {
+    #            "displayName": "fullPath",
+    #            "fullDisplayName": "fullPath",
+    #            "isStyled": true,
+    #            "name": "fullPath",
+    #            "role": "dimension",
+    #            "type": "TEXT"
+    #        }
+    #    ],
+    #    "containsLego": false,
+    #    "empty": false,
+    #    "exportable": true,
+    #    "frame": false,
+    #    "hasTemplate": false,
+    #    "legoProperties": null,
+    #    "metaData": {
+    #        "filtersAvailable": true,
+    #        "orderByAvailable": false,
+    #        "pagerAvailable": false,
+    #        "searchTextAvailable": false
+    #    },
+    #    "name": "",
+    #    "pager": {
+    #        "limit": 20,
+    #        "maxPageLimit": 1000,
+    #        "offset": 0,
+    #        "total": null
+    #    },
+    #    "rows": [
+    #        {
+    #            "full_path": "/mnt/static/public/74/reqtxt-2016-09-02_16-48-19-(4501).txt",
+    #            "id": "c6509ac7-b410-4f77-8f0b-7c1dfd6a871b",
+    #            "url": "http://localhost:8080/media/d/c6509ac7-b410-4f77-8f0b-7c1dfd6a871b"
+    #        }
+    #    ],
+    #    "template": null
+    #}

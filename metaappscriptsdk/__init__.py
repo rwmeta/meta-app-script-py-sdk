@@ -1,25 +1,37 @@
 # coding=utf-8
-import os
+import json
 import sys
 
-import select
 import starter_api as starter_api
 
 from metaappscriptsdk.logger import create_logger
 from metaappscriptsdk.logger.bulk_logger import BulkLogger
 from metaappscriptsdk.logger.logger import Logger
+from metaappscriptsdk.services import get_api_call_headers
+from metaappscriptsdk.services.MediaService import MediaService
 from metaappscriptsdk.worker import Worker
+import os
+from os.path import expanduser
 
 
 class MetaApp(object):
     debug = False
     service_id = None
     starter_api_url = None
+    meta_url = None
     starter = starter_api
     log = Logger()
     worker = None
+    user_agent = None
+    developer_settings = None
 
-    def __init__(self, service_id=None, debug=None, starter_api_url="http://localhost/mystarter"):
+    MediaService = None
+
+    def __init__(self, service_id=None, debug=None,
+                 starter_api_url="http://STUB_URL",
+                 meta_url="http://localhost:8080"
+                 ):
+        self.meta_url = meta_url
         if not debug:
             debug = os.environ.get('DEBUG', True)
             if debug == 'false':
@@ -35,6 +47,9 @@ class MetaApp(object):
         self.service_id = service_id
         create_logger(service_id=service_id, debug=self.debug)
 
+        self.__read_developer_settings()
+        self.user_agent = self.__build_user_agent()
+
         for deprecated_log_msg in deprecated_logs:
             self.log.warning("#" * 15)
             self.log.warning("#" * 15)
@@ -49,7 +64,10 @@ class MetaApp(object):
         self.starter_api_url = starter_api_url
         starter_api.init(self.starter_api_url)
 
-        if select.select([sys.stdin, ], [], [], 0.0)[0]:
+        default_headers = get_api_call_headers(self)
+        self.MediaService = MediaService(self, default_headers)
+
+        if not debug:
             print("Waiting stdin...")
             stdin = ''.join(sys.stdin.readlines())
         else:
@@ -67,3 +85,35 @@ class MetaApp(object):
         :return: BulkLogger
         """
         return BulkLogger(log=self.log, log_message=log_message, total=total, part_log_time_minutes=part_log_time_minutes)
+
+    def __build_user_agent(self):
+        v = sys.version_info
+        return self.service_id + " | Python " + str(v.major) + "." + str(v.minor) + "." + str(v.micro) + " SDK os:" + os.name
+
+    def __read_developer_settings(self):
+        """
+        Читает конфигурации разработчика с локальной машины или из переменных окружения
+        При этом переменная окружения приоритетнее
+        :return:
+        """
+        dev_key_path = "/.rwmeta/developer_settings.json"
+        is_windows = os.name == "nt"
+        if is_windows:
+            dev_key_path = dev_key_path.replace("/", "\\")
+        dev_key_full_path = expanduser("~") + dev_key_path
+        if os.path.isfile(dev_key_full_path):
+            self.log.info(u"Читаем настройки разработчика из локального файла", {"path": dev_key_full_path})
+            with open(dev_key_full_path, 'r') as myfile:
+                self.developer_settings = json.loads(myfile.read())
+
+        env_developer_settings = os.environ.get('X-META-Developer-Settings', None)
+        if env_developer_settings:
+            self.log.info(u"Читаем настройки разработчика из переменной окружения")
+            self.developer_settings = json.loads(env_developer_settings)
+
+        if not self.developer_settings:
+            self.log.warning(u"НЕ УСТАНОВЛЕНЫ настройки разработчика, это может приводить к проблемам в дальнейшей работе!")
+
+
+def pretty_json(obj):
+    return json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '))
