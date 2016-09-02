@@ -1,7 +1,8 @@
 # coding=utf-8
 import json
-import sys
 import os
+import sys
+from os.path import expanduser
 
 import starter_api as starter_api
 
@@ -12,7 +13,7 @@ from metaappscriptsdk.services import get_api_call_headers
 from metaappscriptsdk.services.DbQueryService import DbQueryService
 from metaappscriptsdk.services.MediaService import MediaService
 from metaappscriptsdk.worker import Worker
-from os.path import expanduser
+
 
 class MetaApp(object):
     debug = False
@@ -34,7 +35,6 @@ class MetaApp(object):
                  starter_api_url="http://STUB_URL",
                  meta_url="http://localhost:8080"
                  ):
-        self.meta_url = meta_url
         if not debug:
             debug = os.environ.get('DEBUG', True)
             if debug == 'false':
@@ -64,6 +64,9 @@ class MetaApp(object):
 
         if not debug:
             starter_api_url = "http://s2.meta.vmc.loc:28341"
+            meta_url = "http://meta.realweb.ru"
+
+        self.meta_url = meta_url
         self.starter_api_url = starter_api_url
         starter_api.init(self.starter_api_url)
 

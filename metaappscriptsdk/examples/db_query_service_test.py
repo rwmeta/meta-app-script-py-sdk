@@ -25,7 +25,7 @@ db_adhands_ui = META.db("adhands_ui")
 dr = db_adhands_ui.query("""
     SELECT id, name
     FROM user
-    WHERE n ame LIKE :uname
+    WHERE name LIKE :uname
     AND id IN ( :ids )
     ORDER BY name
     LIMIT 3
@@ -46,3 +46,10 @@ user = db_adhands_ui.one("""
     WHERE id=:id
 """, {"id": 4501})
 print(u"user = %s" % pretty_json(user))
+
+
+db_meta_samples = META.db("meta_samples")
+dr = db_meta_samples.update("""
+    UPDATE counters SET inc = inc + 1 WHERE name = :name
+""", {"name": "md_source_update"})
+print(u"dr = %s" % pretty_json(dr))
