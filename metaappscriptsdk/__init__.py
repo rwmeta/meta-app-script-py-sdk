@@ -1,6 +1,7 @@
 # coding=utf-8
 import json
 import sys
+import os
 
 import starter_api as starter_api
 
@@ -8,11 +9,10 @@ from metaappscriptsdk.logger import create_logger
 from metaappscriptsdk.logger.bulk_logger import BulkLogger
 from metaappscriptsdk.logger.logger import Logger
 from metaappscriptsdk.services import get_api_call_headers
+from metaappscriptsdk.services.DbQueryService import DbQueryService
 from metaappscriptsdk.services.MediaService import MediaService
 from metaappscriptsdk.worker import Worker
-import os
 from os.path import expanduser
-
 
 class MetaApp(object):
     debug = False
@@ -26,6 +26,9 @@ class MetaApp(object):
     developer_settings = None
 
     MediaService = None
+
+    __default_headers = set()
+    __db_list = {}
 
     def __init__(self, service_id=None, debug=None,
                  starter_api_url="http://STUB_URL",
@@ -64,8 +67,8 @@ class MetaApp(object):
         self.starter_api_url = starter_api_url
         starter_api.init(self.starter_api_url)
 
-        default_headers = get_api_call_headers(self)
-        self.MediaService = MediaService(self, default_headers)
+        self.__default_headers = get_api_call_headers(self)
+        self.MediaService = MediaService(self, self.__default_headers)
 
         if not debug:
             print("Waiting stdin...")
@@ -85,6 +88,16 @@ class MetaApp(object):
         :return: BulkLogger
         """
         return BulkLogger(log=self.log, log_message=log_message, total=total, part_log_time_minutes=part_log_time_minutes)
+
+    def db(self, db_alias):
+        """
+        Получить экземпляр работы с БД
+        :type db_alias: basestring Альяс БД из меты
+        :rtype: DbQueryService
+        """
+        if db_alias not in self.__db_list:
+            self.__db_list[db_alias] = DbQueryService(self, self.__default_headers, {"db_alias": db_alias})
+        return self.__db_list[db_alias]
 
     def __build_user_agent(self):
         v = sys.version_info

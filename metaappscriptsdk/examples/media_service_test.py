@@ -13,9 +13,7 @@ result = META.MediaService.persist_one(
     file_base64_content=YOUR_FILE_CONTENT_BASE64,
     filename="req.txt",
     extension="txt",
-    mime="plain/text",
-    is_private=False,
-    origin="ROBOT",
+    mime="plain/text"
 )
 # Формат ответа стандартный для меты
 first = result['rows'][0]
