@@ -13,6 +13,8 @@ with open(path.join(here, 'README.rst')) as f:
 packages = [
     'metaappscriptsdk',
     'metaappscriptsdk.logger',
+    'metaappscriptsdk.services',
+    'metaappscriptsdk.starter',
 ]
 
 install_reqs = parse_requirements(path.join(here, 'requirements.txt'), session=False)
