@@ -1,5 +1,4 @@
 # coding=utf-8
-import json
 
 from metaappscriptsdk.services import api_call
 
@@ -13,10 +12,10 @@ class DbQueryService:
         self.__default_headers = default_headers
         self.__options = options
 
-    def update(self, command, params=None, shard_id=None):
+    def update(self, command, params=None):
         return api_call("DbQueryService", "update", locals(), self.__options, self.__app, self.__default_headers)
 
-    def query(self, command, params=None, shard_id=None):
+    def query(self, command, params=None):
         """
         Выполняет запрос, который ОБЯЗАТЕЛЬНО должен вернуть результат.
         Если вам надо сделать INSERT, UPDATE, DELETE или пр. используйте метод update
@@ -27,23 +26,31 @@ class DbQueryService:
         :rtype: object DataResult
         :param command: SQL запрос
         :param params: Параметры для prepared statements
-        :param shard_id: ID шарды для шардируемых БД
         """
         return api_call("DbQueryService", "query", locals(), self.__options, self.__app, self.__default_headers)
 
-
-    def one(self, command, params=None, shard_id=None):
+    def one(self, command, params=None):
         """
-        Выполняет запрос, который ОБЯЗАТЕЛЬНО должен вернуть результат.
-        Если вам надо сделать INSERT, UPDATE, DELETE или пр. используйте метод update
-        или возвращайте результата через конструкцию RETURNING (нет в MySQL)
+        Возвращает первую строку ответа, полученного через query
 
         > db.query('SELECT * FORM users WHERE id=:id', {"id":MY_USER_ID})
 
-        :rtype: object DataResult
         :param command: SQL запрос
         :param params: Параметры для prepared statements
-        :param shard_id: ID шарды для шардируемых БД
+        :rtype: dict
         """
-        dr = self.query(command, params, shard_id)
+        dr = self.query(command, params)
         return dr['rows'][0]
+
+    def all(self, command, params=None):
+        """
+        Возвращает строки ответа, полученного через query
+
+        > db.query('SELECT * FORM users WHERE id=:id', {"id":MY_USER_ID})
+
+        :param command: SQL запрос
+        :param params: Параметры для prepared statements
+        :rtype: list of dict
+        """
+        dr = self.query(command, params)
+        return dr['rows']

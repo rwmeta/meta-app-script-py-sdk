@@ -92,15 +92,20 @@ class MetaApp(object):
         """
         return BulkLogger(log=self.log, log_message=log_message, total=total, part_log_time_minutes=part_log_time_minutes)
 
-    def db(self, db_alias):
+    def db(self, db_alias, shard_find_key=None):
         """
         Получить экземпляр работы с БД
         :type db_alias: basestring Альяс БД из меты
+        :type shard_find_key: Любой тип. Некоторый идентификатор, который поможет мете найти нужную шарду. Тип зависи от принимающей стороны
         :rtype: DbQueryService
         """
-        if db_alias not in self.__db_list:
-            self.__db_list[db_alias] = DbQueryService(self, self.__default_headers, {"db_alias": db_alias})
-        return self.__db_list[db_alias]
+        if shard_find_key is None:
+            shard_find_key = ''
+
+        db_key = db_alias + '__' + str(shard_find_key)
+        if db_key not in self.__db_list:
+            self.__db_list[db_key] = DbQueryService(self, self.__default_headers, {"db_alias": db_alias, "shard_find_key": shard_find_key})
+        return self.__db_list[db_key]
 
     def __build_user_agent(self):
         v = sys.version_info
@@ -132,4 +137,4 @@ class MetaApp(object):
 
 
 def pretty_json(obj):
-    return json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '))
+    return json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
