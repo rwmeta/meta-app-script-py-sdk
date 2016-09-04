@@ -33,7 +33,7 @@ class MetaApp(object):
 
     def __init__(self, service_id=None, debug=None,
                  starter_api_url="http://STUB_URL",
-                 meta_url="http://localhost:8080"
+                 meta_url="http://meta.realweb.ru"
                  ):
         if not debug:
             debug = os.environ.get('DEBUG', True)
