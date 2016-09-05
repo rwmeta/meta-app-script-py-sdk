@@ -40,7 +40,10 @@ class DbQueryService:
         :rtype: dict
         """
         dr = self.query(command, params)
-        return dr['rows'][0]
+        if dr['rows']:
+            return dr['rows'][0]
+        else:
+            return None
 
     def all(self, command, params=None):
         """

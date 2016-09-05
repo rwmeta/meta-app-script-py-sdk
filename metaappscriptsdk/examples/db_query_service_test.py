@@ -5,6 +5,17 @@ META = MetaApp()
 log = META.log
 
 db_adplatform = META.db("adplatform")
+u = db_adplatform.one("""
+    SELECT id, name, info
+    FROM users
+    WHERE id = -1
+    LIMIT 1
+""")
+# Выдаст None
+print(u"u = %s" % u)
+
+
+db_adplatform = META.db("adplatform")
 dr = db_adplatform.query("""
     SELECT id, name, info
     FROM users
