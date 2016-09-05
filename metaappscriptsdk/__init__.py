@@ -138,3 +138,7 @@ class MetaApp(object):
 
 def pretty_json(obj):
     return json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
+
+
+def utf8(text):
+    return unicode(text, 'utf-8') if isinstance(text, str) else text
