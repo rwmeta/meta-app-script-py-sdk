@@ -6,8 +6,7 @@ from metaappscriptsdk import MetaApp, pretty_json
 META = MetaApp()
 log = META.log
 
-YOUR_FILE_CONTENT_BASE64 = base64.b64encode("Hello, from META!")
-
+YOUR_FILE_CONTENT_BASE64 = base64.b64encode(b"Hello, from META!").decode("utf-8")
 # Получаете инстанс сервиса и делаете запрос к нему
 result = META.MediaService.persist_one(
     file_base64_content=YOUR_FILE_CONTENT_BASE64,

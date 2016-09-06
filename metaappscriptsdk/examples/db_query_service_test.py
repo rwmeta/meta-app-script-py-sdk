@@ -14,7 +14,6 @@ u = db_adplatform.one("""
 # Выдаст None
 print(u"u = %s" % u)
 
-
 db_adplatform = META.db("adplatform")
 dr = db_adplatform.query("""
     SELECT id, name, info
@@ -26,7 +25,7 @@ dr = db_adplatform.query("""
 print(u"dr = %s" % pretty_json(dr))
 
 for r in dr['rows']:
-    print "\n"
+    print("\n")
     print(u"r['id'] = %s" % r['id'])
     print(u"r['name'] = %s" % r['name'])
     print(u"r['info'] = %s" % pretty_json(r['info']))
@@ -45,7 +44,7 @@ dr = db_adhands_ui.query("""
 })
 
 for r in dr['rows']:
-    print "\n"
+    print("\n")
     print(u"r['id'] = %s" % r['id'])
     print(u"r['name'] = %s" % r['name'])
 
@@ -56,7 +55,6 @@ user = db_adhands_ui.one("""
     WHERE id=:id
 """, {"id": 4501})
 print(u"user = %s" % pretty_json(user))
-
 
 db_meta_samples = META.db("meta_samples")
 dr = db_meta_samples.update("""

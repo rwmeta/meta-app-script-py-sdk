@@ -12,7 +12,7 @@ class BulkLogger:
         self.__counter = 0
 
         if total <= 0:
-            self.__log.info(u'Нет элементов для логирования. Вероятно список массив пустой')
+            self.__log.info('Нет элементов для логирования. Вероятно список массив пустой')
             total = None
 
         self.__total = total

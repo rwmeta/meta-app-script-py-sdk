@@ -1,7 +1,7 @@
 # coding=utf-8
 from metaappscriptsdk import MetaApp, pretty_json
 
-META = MetaApp(meta_url="http://localhost:8080")
+META = MetaApp(meta_url="http://meta.realweb.ru")
 log = META.log
 
 log.info('start')

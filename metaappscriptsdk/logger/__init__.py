@@ -1,11 +1,12 @@
 # coding=utf-8
 
 from __future__ import print_function
+
 import logging
+import sys
 import traceback
 
 from metaappscriptsdk.logger.custom_fluent import FluentHandler, FluentRecordFormatter
-import sys
 
 # http://stackoverflow.com/questions/11029717/how-do-i-disable-log-messages-from-the-requests-library
 # Отключаем логи от бибилиотеки requests
@@ -57,7 +58,7 @@ class StdoutFormatter(logging.Formatter, object):
         ex = context.get("e")
         if ex:
             context.update({'e': {
-                'class': ex.__class__,
+                'class': str(ex.__class__),
                 'message': str(ex),
                 'trace': str(traceback.format_exc()),
             }})

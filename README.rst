@@ -7,6 +7,8 @@ Install
 =======
 pip install metaappscriptsdk
 
+Последний резил для Python 2 = 0.1.3
+Python 3 начинается с > 0.3.0
 
 Full Examples
 =============
@@ -184,7 +186,7 @@ MediaService
 
     # Получаете инстанс сервиса и делаете запрос к нему
     result = META.MediaService.persist_one(
-        file_base64_content=base64.b64encode("Hello, from META!"),
+        file_base64_content=base64.b64encode(b"Hello, from META!").decode("utf-8"),
         filename="req.txt",
         extension="txt",
         mime="plain/text",

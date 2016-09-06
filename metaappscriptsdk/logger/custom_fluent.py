@@ -1,11 +1,12 @@
+import hashlib
 import json
 import sys
 import time
 import traceback
 
+import six
 from fluent import handler, sender
 from fluent.handler import FluentRecordFormatter
-import hashlib
 
 import metaappscriptsdk
 
@@ -92,7 +93,7 @@ class FluentRecordFormatter(FluentRecordFormatter, object):
 
         return {
             'e': {
-                'class': exc_type.__name__,  # ZeroDivisionError
+                'class': str(exc_type.__name__),  # ZeroDivisionError
                 'message': str(exc_message),  # integer division or modulo by zero
                 'trace': list(traceback.format_tb(trace)),
             }
@@ -113,7 +114,7 @@ class FluentRecordFormatter(FluentRecordFormatter, object):
         """
         if isinstance(msg, dict):
             self._add_dic(data, msg)
-        elif isinstance(msg, basestring):
+        elif isinstance(msg, six.string_types):
             try:
                 self._add_dic(data, json.loads(str(msg)))
             except ValueError:
@@ -124,5 +125,5 @@ class FluentRecordFormatter(FluentRecordFormatter, object):
     @staticmethod
     def _add_dic(data, dic):
         for key, value in dic.items():
-            if isinstance(key, basestring):
+            if isinstance(key, six.string_types):
                 data[str(key)] = value

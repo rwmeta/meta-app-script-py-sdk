@@ -33,6 +33,7 @@ def my_main_fn():
     bulk_log.finish()
     pool.close()
     pool.join()
-    #print(results)
+    # print(results)
+
 
 my_main_fn()

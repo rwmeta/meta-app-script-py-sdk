@@ -33,10 +33,12 @@ class MetaApp(object):
 
     def __init__(self, service_id=None, debug=None,
                  starter_api_url="http://STUB_URL",
-                 meta_url="http://meta.realweb.ru"
+                 meta_url="http://meta.realweb.ru",
+                 include_worker=None
                  ):
-        if not debug:
+        if debug is None:
             debug = os.environ.get('DEBUG', True)
+            include_worker = True
             if debug == 'false':
                 debug = False
         self.debug = debug
@@ -73,14 +75,15 @@ class MetaApp(object):
         self.__default_headers = get_api_call_headers(self)
         self.MediaService = MediaService(self, self.__default_headers)
 
-        if not debug:
-            print("Waiting stdin...")
-            stdin = ''.join(sys.stdin.readlines())
-        else:
-            print("Empty stdin...")
-            stdin = "[]"
+        if include_worker:
+            if not debug:
+                print("Waiting stdin...")
+                stdin = ''.join(sys.stdin.readlines())
+            else:
+                print("Empty stdin...")
+                stdin = "[]"
 
-        self.worker = Worker(self, stdin)
+            self.worker = Worker(self, stdin)
 
     def bulk_log(self, log_message=u"Еще одна пачка обработана", total=None, part_log_time_minutes=5):
         """
@@ -138,7 +141,3 @@ class MetaApp(object):
 
 def pretty_json(obj):
     return json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
-
-
-def utf8(text):
-    return unicode(text, 'utf-8') if isinstance(text, str) else text

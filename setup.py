@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-import setuptools
 from os import path
+
+import setuptools
 from pip.req import parse_requirements
+
 from metaappscriptsdk import info
 
 here = path.abspath(path.dirname(__file__))

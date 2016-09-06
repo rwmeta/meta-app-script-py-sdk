@@ -1,8 +1,12 @@
-from metaappscriptsdk import MetaApp
 import logging
 
-META = MetaApp()
+from metaappscriptsdk import MetaApp
+
+META = MetaApp(debug=False)
 log = META.log
+
+e = Exception("Русский текст")
+log.error("Моя ошибка", {"e": e})
 
 log.set_entity('campaign_id', -1)
 log.set_entity('test', True)
