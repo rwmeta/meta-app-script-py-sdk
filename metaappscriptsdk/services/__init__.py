@@ -37,10 +37,15 @@ def api_call(service, method, data, options, app, default_headers):
     if options:
         data.update(options)
 
+    _headers = dict(default_headers)
+
+    if app.auth_user_id:
+        _headers['X-META-AuthUserID'] = app.auth_user_id
+
     request = {
         "url": app.meta_url + "/api/v1/adptools/" + service + "/" + method,
         "data": json.dumps(data),
-        "headers": default_headers
+        "headers": _headers
     }
     resp = requests.post(**request)
     if resp.status_code == 200:

@@ -26,6 +26,10 @@ class MetaApp(object):
     user_agent = None
     developer_settings = None
 
+    # Пользователь, из под которого пройдет авторизация после того,
+    # как мета авторизует разработчика, в случае, если разработчик имеет разрешения для авторизации из-под других пользователей
+    auth_user_id = None
+
     MediaService = None
 
     __default_headers = set()
