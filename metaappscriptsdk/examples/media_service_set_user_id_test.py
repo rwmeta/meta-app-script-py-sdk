@@ -21,6 +21,7 @@ result = META.MediaService.persist_one(
     extension="txt",
     mime="plain/text"
 )
+print(u"result = %s" % result)
 # Формат ответа стандартный для меты
 first = result['rows'][0]
 print(u"result['rows'][0]['url'] = %s" % first['url'])

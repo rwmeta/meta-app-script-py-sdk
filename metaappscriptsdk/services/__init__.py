@@ -3,7 +3,7 @@ import json
 
 import requests
 
-from metaappscriptsdk.exceptions import AuthError, DbQueryError, UnexpectedResponseError
+from metaappscriptsdk.exceptions import AuthError, DbQueryError, UnexpectedResponseError, ServerError, RequestError, UnexpectedError
 from metaappscriptsdk.logger import eprint
 
 
@@ -24,9 +24,15 @@ def get_api_call_headers(app):
     return headers
 
 
-def process_meta_api_error_code(status_code, request):
+def process_meta_api_error_code(status_code, request, response_text):
     if status_code == 401:
         raise AuthError(request)
+    elif status_code >= 500:
+        raise ServerError(response_text)
+    elif status_code >= 400:
+        raise RequestError(response_text)
+    else:
+        raise UnexpectedError(request)
 
 
 def api_call(service, method, data, options, app, default_headers):
@@ -40,7 +46,7 @@ def api_call(service, method, data, options, app, default_headers):
     _headers = dict(default_headers)
 
     if app.auth_user_id:
-        _headers['X-META-AuthUserID'] = app.auth_user_id
+        _headers['X-META-AuthUserID'] = str(app.auth_user_id)
 
     request = {
         "url": app.meta_url + "/api/v1/adptools/" + service + "/" + method,
@@ -58,4 +64,4 @@ def api_call(service, method, data, options, app, default_headers):
             raise DbQueryError(decoded_resp['error'])
         raise UnexpectedResponseError()
     else:
-        process_meta_api_error_code(resp.status_code, request)
+        process_meta_api_error_code(resp.status_code, request, resp.text)
