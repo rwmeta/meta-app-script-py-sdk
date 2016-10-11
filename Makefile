@@ -1,14 +1,14 @@
 VERSION=$(shell python metaappscriptsdk/info.py)
 
 init:
-	pip install -r requirements.txt
+	pip3 install -r requirements.txt
 
 publish:
 	echo $(VERSION)
 
-	python setup.py register
-	python setup.py sdist upload
-	python setup.py bdist_wheel --universal upload
+	python3 setup.py register
+	python3 setup.py sdist upload
+	python3 setup.py bdist_wheel --universal upload
 
 	$(shell git tag $(VERSION))
 	$(shell git push origin $(VERSION))
