@@ -304,3 +304,12 @@ DbQueryService
         UPDATE counters SET inc = inc + 1 WHERE name = :name
     """, {"name": "md_source_update"})
     print(u"dr = %s" % pretty_json(dr))
+
+    dr = db_meta_samples.batch_update("""
+        INSERT INTO test_batch_update VALUES (:id, :mytime::timestamp)
+        ON CONFLICT(id) DO UPDATE SET mod_time=NOW()
+    """, [
+        {"id": "py_1", "mytime": "2014-01-01"},
+        {"id": "py_2", "mytime": "2014-01-01"},
+    ])
+    print(u"dr = %s" % pretty_json(dr))
