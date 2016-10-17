@@ -26,6 +26,8 @@ class Worker:
 
     def __run(self, main_fn, resolver_type):
         tasks = self.get_tasks()
+        if not tasks:
+            return
 
         log = self.__app.log
         log.info(u'Старт')
@@ -52,5 +54,4 @@ class Worker:
 
         if not tasks:
             tasks = self.__raw_tasks
-        if not tasks:
-            return tasks
+        return tasks
