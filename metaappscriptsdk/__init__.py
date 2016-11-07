@@ -4,12 +4,14 @@ import os
 import sys
 from os.path import expanduser
 
+import requests
 import starter_api as starter_api
 
-from metaappscriptsdk.logger import create_logger
+from metaappscriptsdk.exceptions import UnexpectedResponseError, DbQueryError
+from metaappscriptsdk.logger import create_logger, eprint
 from metaappscriptsdk.logger.bulk_logger import BulkLogger
 from metaappscriptsdk.logger.logger import Logger
-from metaappscriptsdk.services import get_api_call_headers
+from metaappscriptsdk.services import get_api_call_headers, process_meta_api_error_code
 from metaappscriptsdk.services.DbQueryService import DbQueryService
 from metaappscriptsdk.services.MediaService import MediaService
 from metaappscriptsdk.worker import Worker
@@ -141,6 +143,37 @@ class MetaApp(object):
 
         if not self.developer_settings:
             self.log.warning(u"НЕ УСТАНОВЛЕНЫ настройки разработчика, это может приводить к проблемам в дальнейшей работе!")
+
+    def api_call(self, service, method, data, options):
+        """
+        :type app: metaappscriptsdk.MetaApp
+        """
+        data.pop("self")
+        if options:
+            data.update(options)
+
+        _headers = dict(self.__default_headers)
+
+        if self.auth_user_id:
+            _headers['X-META-AuthUserID'] = str(self.auth_user_id)
+
+        request = {
+            "url": self.meta_url + "/api/v1/adptools/" + service + "/" + method,
+            "data": json.dumps(data),
+            "headers": _headers
+        }
+        resp = requests.post(**request)
+        if resp.status_code == 200:
+            decoded_resp = json.loads(resp.text)
+            if 'data' in decoded_resp:
+                return decoded_resp['data'][method]
+            if 'error' in decoded_resp:
+                if 'details' in decoded_resp['error']:
+                    eprint(decoded_resp['error']['details'])
+                raise DbQueryError(decoded_resp['error'])
+            raise UnexpectedResponseError()
+        else:
+            process_meta_api_error_code(resp.status_code, request, resp.text)
 
 
 def pretty_json(obj):

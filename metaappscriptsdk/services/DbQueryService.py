@@ -1,8 +1,5 @@
 # coding=utf-8
 
-from metaappscriptsdk.services import api_call
-
-
 class DbQueryService:
     def __init__(self, app, default_headers, options):
         """
@@ -13,10 +10,10 @@ class DbQueryService:
         self.__options = options
 
     def update(self, command, params=None):
-        return api_call("DbQueryService", "update", locals(), self.__options, self.__app, self.__default_headers)
+        return self.__app.api_call("DbQueryService", "update", locals(), self.__options)
 
     def batch_update(self, command: str, params=None):
-        return api_call("DbQueryService", "batch_update", locals(), self.__options, self.__app, self.__default_headers)
+        return self.__app.api_call("DbQueryService", "batch_update", locals(), self.__options)
 
     def query(self, command, params=None):
         """
@@ -30,7 +27,7 @@ class DbQueryService:
         :param command: SQL запрос
         :param params: Параметры для prepared statements
         """
-        return api_call("DbQueryService", "query", locals(), self.__options, self.__app, self.__default_headers)
+        return self.__app.api_call("DbQueryService", "query", locals(), self.__options)
 
     def one(self, command, params=None):
         """

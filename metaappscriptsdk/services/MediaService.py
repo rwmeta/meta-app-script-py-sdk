@@ -1,7 +1,5 @@
 # coding=utf-8
 
-from metaappscriptsdk.services import api_call
-
 
 class MediaService:
     def __init__(self, app, default_headers):
@@ -16,4 +14,4 @@ class MediaService:
         Загружает файл в облако
         :type origin: string Принимает значения ROBOT, USER
         """
-        return api_call("MediaService", "persist_one", locals(), {}, self.__app, self.__default_headers)
+        return self.__app.api_call("MediaService", "persist_one", locals(), {})
