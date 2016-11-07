@@ -148,7 +148,11 @@ class MetaApp(object):
         """
         :type app: metaappscriptsdk.MetaApp
         """
-        data.pop("self")
+        if 'self' in data:
+            # может не быть, если вызывается напрямую из кода,
+            # а не из прослоек типа DbQueryService
+            data.pop("self")
+
         if options:
             data.update(options)
 
