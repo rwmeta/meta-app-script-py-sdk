@@ -72,7 +72,6 @@ class MetaApp(object):
 
         if not debug:
             starter_api_url = "http://s2.meta.vmc.loc:28341"
-            meta_url = "http://meta.realweb.ru"
 
         self.meta_url = meta_url
         self.starter_api_url = starter_api_url
