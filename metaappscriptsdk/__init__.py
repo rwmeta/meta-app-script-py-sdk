@@ -6,8 +6,9 @@ from os.path import expanduser
 
 import requests
 import starter_api as starter_api
+import time
 
-from metaappscriptsdk.exceptions import UnexpectedResponseError, DbQueryError
+from metaappscriptsdk.exceptions import UnexpectedResponseError, DbQueryError, ServerError
 from metaappscriptsdk.logger import create_logger, eprint
 from metaappscriptsdk.logger.bulk_logger import BulkLogger
 from metaappscriptsdk.logger.logger import Logger
@@ -165,18 +166,30 @@ class MetaApp(object):
             "data": json.dumps(data),
             "headers": _headers
         }
-        resp = requests.post(**request)
-        if resp.status_code == 200:
-            decoded_resp = json.loads(resp.text)
-            if 'data' in decoded_resp:
-                return decoded_resp['data'][method]
-            if 'error' in decoded_resp:
-                if 'details' in decoded_resp['error']:
-                    eprint(decoded_resp['error']['details'])
-                raise DbQueryError(decoded_resp['error'])
-            raise UnexpectedResponseError()
-        else:
-            process_meta_api_error_code(resp.status_code, request, resp.text)
+
+        for try_idx in range(6):
+            try:
+                # Пока непонятно почему частенько получаем ошибку:
+                # Failed to establish a new connection: [Errno 110] Connection timed out',))
+                # Пока пробуем делать доп. запросы
+                # Так же жестко указываем timeout-ы
+                resp = requests.post(**request, timeout=(3.05, 1800))
+                if resp.status_code == 200:
+                    decoded_resp = json.loads(resp.text)
+                    if 'data' in decoded_resp:
+                        return decoded_resp['data'][method]
+                    if 'error' in decoded_resp:
+                        if 'details' in decoded_resp['error']:
+                            eprint(decoded_resp['error']['details'])
+                        raise DbQueryError(decoded_resp['error'])
+                    raise UnexpectedResponseError()
+                else:
+                    process_meta_api_error_code(resp.status_code, request, resp.text)
+            except ConnectionError as e:
+                self.log.warning('META API Connection Error. Sleep...', {"e": e})
+                time.sleep(15)
+
+        raise ServerError(request)
 
 
 def pretty_json(obj):
