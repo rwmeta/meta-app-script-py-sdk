@@ -17,7 +17,7 @@ class Schedule:
         for expr in expr_list:
             cron = croniter.croniter(expr.get('value'), now)
             val_ = cron.get_next(datetime.datetime)
-            if min_date is None or min_date < val_:
+            if min_date is None or val_ < min_date:
                 min_date = val_
         if as_string and min_date:
             return min_date.strftime("%Y-%m-%d %H:%M:%S")

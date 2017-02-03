@@ -21,11 +21,17 @@ class TestSchedule(TestCase):
         schedule = Schedule()
         exprs = [
             {
-                "value": "0 0 * * *"
+                "value": "0 0 3 * *"
             },
             {
-                "value": "10 4 3 * *"
+                "value": "10 4 * * *"
             }
         ]
         actual = schedule.get_next_time(exprs, False, now)
-        self.assertEqual(datetime.datetime(2005, 1, 3, 4, 10), actual)
+        self.assertEqual(datetime.datetime(2005, 1, 1, 4, 10), actual)
+
+    def test_get_next_time_empty_schedules(self):
+        schedule = Schedule()
+        exprs = []
+        actual = schedule.get_next_time(exprs)
+        self.assertEqual(None, actual)
