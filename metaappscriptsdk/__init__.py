@@ -12,6 +12,7 @@ from metaappscriptsdk.exceptions import UnexpectedResponseError, DbQueryError, S
 from metaappscriptsdk.logger import create_logger, eprint
 from metaappscriptsdk.logger.bulk_logger import BulkLogger
 from metaappscriptsdk.logger.logger import Logger
+from metaappscriptsdk.schedule.Schedule import Schedule
 from metaappscriptsdk.services import get_api_call_headers, process_meta_api_error_code
 from metaappscriptsdk.services.DbQueryService import DbQueryService
 from metaappscriptsdk.services.MediaService import MediaService
@@ -25,6 +26,7 @@ class MetaApp(object):
     meta_url = None
     starter = starter_api
     log = Logger()
+    schedule = Schedule()
     worker = None
     user_agent = None
     developer_settings = None
