@@ -2,11 +2,11 @@
 import json
 import os
 import sys
+import time
 from os.path import expanduser
 
 import requests
 import starter_api as starter_api
-import time
 
 from metaappscriptsdk.exceptions import UnexpectedResponseError, DbQueryError, ServerError
 from metaappscriptsdk.logger import create_logger, eprint
@@ -166,7 +166,8 @@ class MetaApp(object):
         request = {
             "url": self.meta_url + "/api/v1/adptools/" + service + "/" + method,
             "data": json.dumps(data),
-            "headers": _headers
+            "headers": _headers,
+            "timeout": (3.05, 1800)
         }
 
         for try_idx in range(6):
@@ -175,7 +176,7 @@ class MetaApp(object):
                 # Failed to establish a new connection: [Errno 110] Connection timed out',))
                 # Пока пробуем делать доп. запросы
                 # Так же жестко указываем timeout-ы
-                resp = requests.post(**request, timeout=(3.05, 1800))
+                resp = requests.post(**request)
                 if resp.status_code == 200:
                     decoded_resp = json.loads(resp.text)
                     if 'data' in decoded_resp:
