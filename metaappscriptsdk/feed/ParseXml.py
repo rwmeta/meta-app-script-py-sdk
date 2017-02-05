@@ -1,6 +1,7 @@
 import xml.sax
 from collections import OrderedDict
 from xml.sax.xmlreader import AttributesNSImpl
+from xml.sax import handler
 
 # http://www.theinformationlab.co.uk/wp-content/uploads/2015/07/Step-Three2.png
 from metaappscriptsdk.feed.FeedColumn import FeedColumn
@@ -56,9 +57,10 @@ def parse_xml(file_path):
     :param file_path:
     :rtype: list of FeedColumn
     """
-    handler = Exact()
+    extract_handler = Exact()
     parser = xml.sax.make_parser()
-    parser.setContentHandler(handler)
+    parser.setFeature(handler.feature_external_ges, False)
+    parser.setContentHandler(extract_handler)
     parser.parse(open(file_path))
-    schema = list(handler.schema.values())
+    schema = list(extract_handler.schema.values())
     return schema
