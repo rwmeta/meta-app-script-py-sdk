@@ -17,6 +17,7 @@ packages = [
     'metaappscriptsdk.logger',
     'metaappscriptsdk.services',
     'metaappscriptsdk.schedule',
+    'metaappscriptsdk.feed',
     'metaappscriptsdk.starter',
 ]
 
