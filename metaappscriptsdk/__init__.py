@@ -42,7 +42,7 @@ class MetaApp(object):
 
     def __init__(self, service_id=None, debug=None,
                  starter_api_url="http://STUB_URL",
-                 meta_url="http://meta.realweb.ru",
+                 meta_url="https://meta.realweb.ru",
                  include_worker=None
                  ):
         if debug is None:

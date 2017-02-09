@@ -1,4 +1,4 @@
-__version__ = '0.3.20'
+__version__ = '0.3.21'
 __package_name__ = 'metaappscriptsdk'
 
 if __name__ == "__main__":
