@@ -167,7 +167,7 @@ class MetaApp(object):
             "url": self.meta_url + "/api/v1/adptools/" + service + "/" + method,
             "data": json.dumps(data),
             "headers": _headers,
-            "timeout": (3.05, 1800)
+            "timeout": (60, 1800)
         }
 
         for try_idx in range(6):
