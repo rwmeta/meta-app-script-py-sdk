@@ -9,7 +9,7 @@ class MediaService:
         self.__app = app
         self.__default_headers = default_headers
 
-    def persist_one(self, file_base64_content, filename, extension, mime, is_private=True, origin="ROBOT"):
+    def persist_one(self, file_base64_content, filename, extension, mime, is_private=True):
         """
         Загружает файл в облако
         :type origin: string Принимает значения ROBOT, USER
