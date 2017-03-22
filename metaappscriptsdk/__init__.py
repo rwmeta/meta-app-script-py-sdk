@@ -103,19 +103,19 @@ class MetaApp(object):
         """
         return BulkLogger(log=self.log, log_message=log_message, total=total, part_log_time_minutes=part_log_time_minutes)
 
-    def db(self, db_alias, shard_find_key=None):
+    def db(self, db_alias, shard_key=None):
         """
         Получить экземпляр работы с БД
         :type db_alias: basestring Альяс БД из меты
-        :type shard_find_key: Любой тип. Некоторый идентификатор, который поможет мете найти нужную шарду. Тип зависи от принимающей стороны
+        :type shard_key: Любой тип. Некоторый идентификатор, который поможет мете найти нужную шарду. Тип зависи от принимающей стороны
         :rtype: DbQueryService
         """
-        if shard_find_key is None:
-            shard_find_key = ''
+        if shard_key is None:
+            shard_key = ''
 
-        db_key = db_alias + '__' + str(shard_find_key)
+        db_key = db_alias + '__' + str(shard_key)
         if db_key not in self.__db_list:
-            self.__db_list[db_key] = DbQueryService(self, self.__default_headers, {"db_alias": db_alias, "shard_find_key": shard_find_key})
+            self.__db_list[db_key] = DbQueryService(self, self.__default_headers, {"db_alias": db_alias, "dbAlias": db_alias, "shard_find_key": shard_key, "shardKey": shard_key})
         return self.__db_list[db_key]
 
     def __build_user_agent(self):
@@ -186,6 +186,60 @@ class MetaApp(object):
                             eprint(decoded_resp['error']['details'])
                         raise DbQueryError(decoded_resp['error'])
                     raise UnexpectedResponseError()
+                else:
+                    process_meta_api_error_code(resp.status_code, request, resp.text)
+            except ConnectionError as e:
+                self.log.warning('META API Connection Error. Sleep...', {"e": e})
+                time.sleep(15)
+
+        raise ServerError(request)
+
+    def native_api_call(self, service, method, data, options, multipart_form_data=None):
+        """
+        :type app: metaappscriptsdk.MetaApp
+        """
+        if 'self' in data:
+            # может не быть, если вызывается напрямую из кода,
+            # а не из прослоек типа DbQueryService
+            data.pop("self")
+
+        if options:
+            data.update(options)
+
+        _headers = dict(self.__default_headers)
+
+        if self.auth_user_id:
+            _headers['X-META-AuthUserID'] = str(self.auth_user_id)
+
+        request = {
+            "url": self.meta_url + "/api/meta/v1/" + service + "/" + method,
+            "timeout": (60, 1800)
+        }
+
+        if multipart_form_data:
+            request['files'] = multipart_form_data
+            request['data'] = data
+            _headers.pop('content-type', None)
+        else:
+            request['data'] = json.dumps(data)
+        request['headers'] = _headers
+        print(u"request = %s" % str(request))
+        for try_idx in range(6):
+            try:
+                # Пока непонятно почему частенько получаем ошибку:
+                # Failed to establish a new connection: [Errno 110] Connection timed out',))
+                # Пока пробуем делать доп. запросы
+                # Так же жестко указываем timeout-ы
+                resp = requests.post(**request)
+                if resp.status_code == 200:
+                    return resp.text
+                    # if 'data' in decoded_resp:
+                    #     return decoded_resp['data'][method]
+                    # if 'error' in decoded_resp:
+                    #     if 'details' in decoded_resp['error']:
+                    #         eprint(decoded_resp['error']['details'])
+                    #     raise DbQueryError(decoded_resp['error'])
+                    # raise UnexpectedResponseError()
                 else:
                     process_meta_api_error_code(resp.status_code, request, resp.text)
             except ConnectionError as e:
