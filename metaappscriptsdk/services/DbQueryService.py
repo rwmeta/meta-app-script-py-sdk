@@ -66,5 +66,4 @@ class DbQueryService:
         }
         params = {"configuration": json.dumps(configuration)}
         dr = self.__app.native_api_call('db', 'load-data', params, self.__options, multipart_form_data)
-        print(u"dr = %s" % str(dr))
-        # return dr['rows']
+        return json.loads(dr)

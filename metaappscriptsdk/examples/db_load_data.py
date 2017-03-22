@@ -28,4 +28,5 @@ configuration = {
 }
 
 db = META.db("meta_samples")
-db.load_data(upload_file, configuration)
+result = db.load_data(upload_file, configuration)
+print(u"result = %s" % str(result))

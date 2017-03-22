@@ -223,7 +223,7 @@ class MetaApp(object):
         else:
             request['data'] = json.dumps(data)
         request['headers'] = _headers
-        print(u"request = %s" % str(request))
+
         for try_idx in range(6):
             try:
                 # Пока непонятно почему частенько получаем ошибку:
