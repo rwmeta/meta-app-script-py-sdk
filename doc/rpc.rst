@@ -146,3 +146,43 @@ DbQueryService
         {"id": "py_2", "mytime": "2014-01-01"},
     ])
     print(u"dr = %s" % pretty_json(dr))
+
+
+Отдельно стоит упомянуть про LoadData Api
+Этот API позваоляет как в BigQuery создавать таблицу у казанной БД и потоково загружать в нее данные из файла формата TSV
+Это позволяет ускорять вставку данных в таблицу от 2 до 4-5 раз.
+
+ВАЖНО! Данные всегда добавляются в указанную таблицу и никакой очистки старых данных нет - вы должны почистить таблицу сами, если вам это нужно
+
+.. code-block:: python
+
+    import os
+    from metaappscriptsdk import MetaApp
+
+    META = MetaApp()
+
+    os.chdir(os.path.dirname(__file__))
+    __DIR__ = os.getcwd() + "/"
+
+    upload_file = open(__DIR__ + 'assets/load_data_sample.tsv', 'rb')
+
+
+    configuration = {
+        "load": {
+            "destinationTable": {
+                "schema": "public",
+                "table": "xxx_ya_stat"
+            },
+            "schema": {
+                "fields": [
+                    {"name": "Date", "type": "DATE"},
+                    {"name": "Clicks", "type": "LONG"},
+                    {"name": "Cost", "type": "DECIMAL"},
+                    {"name": "AdNetworkType", "type": "TEXT"},
+                ]
+            }
+        }
+    }
+
+    db = META.db("meta_samples")
+    db.load_data(upload_file, configuration)

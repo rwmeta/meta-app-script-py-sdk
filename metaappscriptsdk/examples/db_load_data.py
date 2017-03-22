@@ -1,5 +1,4 @@
 import os
-
 from metaappscriptsdk import MetaApp
 
 META = MetaApp()
