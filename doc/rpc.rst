@@ -185,4 +185,4 @@ DbQueryService
     }
 
     db = META.db("meta_samples")
-    db.load_data(upload_file, configuration)
+    db.upload_data(upload_file, configuration)

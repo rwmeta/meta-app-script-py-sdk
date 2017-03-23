@@ -194,7 +194,7 @@ class MetaApp(object):
 
         raise ServerError(request)
 
-    def native_api_call(self, service, method, data, options, multipart_form_data=None):
+    def native_api_call(self, service, method, data, options, multipart_form=False, multipart_form_data=None, stream=False):
         """
         :type app: metaappscriptsdk.MetaApp
         """
@@ -213,11 +213,13 @@ class MetaApp(object):
 
         request = {
             "url": self.meta_url + "/api/meta/v1/" + service + "/" + method,
-            "timeout": (60, 1800)
+            "timeout": (60, 1800),
+            "stream": stream
         }
 
-        if multipart_form_data:
-            request['files'] = multipart_form_data
+        if multipart_form:
+            if multipart_form_data:
+                request['files'] = multipart_form_data
             request['data'] = data
             _headers.pop('content-type', None)
         else:
@@ -232,7 +234,7 @@ class MetaApp(object):
                 # Так же жестко указываем timeout-ы
                 resp = requests.post(**request)
                 if resp.status_code == 200:
-                    return resp.text
+                    return resp
                     # if 'data' in decoded_resp:
                     #     return decoded_resp['data'][method]
                     # if 'error' in decoded_resp:
