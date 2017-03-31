@@ -194,9 +194,10 @@ class MetaApp(object):
 
         raise ServerError(request)
 
-    def native_api_call(self, service, method, data, options, multipart_form=False, multipart_form_data=None, stream=False):
+    def native_api_call(self, service, method, data, options, multipart_form=False, multipart_form_data=None, stream=False, http_path="/api/meta/v1/", http_method='POST'):
         """
         :type app: metaappscriptsdk.MetaApp
+        :rtype: requests.Response
         """
         if 'self' in data:
             # может не быть, если вызывается напрямую из кода,
@@ -212,7 +213,7 @@ class MetaApp(object):
             _headers['X-META-AuthUserID'] = str(self.auth_user_id)
 
         request = {
-            "url": self.meta_url + "/api/meta/v1/" + service + "/" + method,
+            "url": self.meta_url + http_path + service + "/" + method,
             "timeout": (60, 1800),
             "stream": stream
         }
@@ -232,7 +233,8 @@ class MetaApp(object):
                 # Failed to establish a new connection: [Errno 110] Connection timed out',))
                 # Пока пробуем делать доп. запросы
                 # Так же жестко указываем timeout-ы
-                resp = requests.post(**request)
+                # resp = requests.post(**request)
+                resp = requests.request(http_method, **request)
                 if resp.status_code == 200:
                     return resp
                     # if 'data' in decoded_resp:
