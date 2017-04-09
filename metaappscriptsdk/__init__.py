@@ -16,6 +16,7 @@ from metaappscriptsdk.schedule.Schedule import Schedule
 from metaappscriptsdk.services import get_api_call_headers, process_meta_api_error_code
 from metaappscriptsdk.services.DbQueryService import DbQueryService
 from metaappscriptsdk.services.MediaService import MediaService
+from metaappscriptsdk.services.MetaqlService import MetaqlService
 from metaappscriptsdk.worker import Worker
 
 
@@ -36,6 +37,7 @@ class MetaApp(object):
     auth_user_id = None
 
     MediaService = None
+    MetaqlService = None
 
     __default_headers = set()
     __db_list = {}
@@ -82,6 +84,7 @@ class MetaApp(object):
 
         self.__default_headers = get_api_call_headers(self)
         self.MediaService = MediaService(self, self.__default_headers)
+        self.MetaqlService = MetaqlService(self, self.__default_headers)
 
         if include_worker:
             if not debug:
@@ -120,7 +123,7 @@ class MetaApp(object):
 
     def __build_user_agent(self):
         v = sys.version_info
-        return self.service_id + " | Python " + str(v.major) + "." + str(v.minor) + "." + str(v.micro) + " SDK os:" + os.name
+        return self.service_id + " | Python " + str(v.major) + "." + str(v.minor) + "." + str(v.micro) + " META SDK os:" + os.name
 
     def __read_developer_settings(self):
         """
@@ -227,6 +230,7 @@ class MetaApp(object):
             request['data'] = json.dumps(data)
         request['headers'] = _headers
 
+        print(u"request = %s" % str(request))
         for try_idx in range(6):
             try:
                 # Пока непонятно почему частенько получаем ошибку:
