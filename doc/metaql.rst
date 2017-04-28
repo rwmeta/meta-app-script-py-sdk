@@ -7,8 +7,8 @@ METAQL
 Функции
 -------
 Работают функции агрегации:
- - MIN, MAX, SUM, AGV,
- - COUNT(*), COUNT(DISTINCT поле),
+ - MIN, MAX, SUM, AGV
+ - COUNT(*), COUNT(DISTINCT поле)
 
 Функции преобразований:
  - ROUND
