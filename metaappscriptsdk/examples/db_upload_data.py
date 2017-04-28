@@ -4,7 +4,7 @@ from metaappscriptsdk import MetaApp
 META = MetaApp()
 log = META.log
 
-os.chdir(os.path.dirname(__file__))
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 __DIR__ = os.getcwd() + "/"
 
 upload_file = open(__DIR__ + 'assets/load_data_sample.tsv', 'rb')

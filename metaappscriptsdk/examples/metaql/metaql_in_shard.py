@@ -3,13 +3,13 @@ import os
 
 from metaappscriptsdk import MetaApp
 
-META = MetaApp(meta_url="https://meta.realweb.ru")
+META = MetaApp()
 # META = MetaApp(meta_url="http://localhost:8080")
 log = META.log
 
 account_id = 137506
 
-os.chdir(os.path.dirname(__file__))
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 __DIR__ = os.getcwd() + "/"
 
 configuration = {
