@@ -2,7 +2,7 @@ import os
 
 from metaappscriptsdk import MetaApp
 
-META = MetaApp(meta_url="https://meta.realweb.ru")
+META = MetaApp()
 log = META.log
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))

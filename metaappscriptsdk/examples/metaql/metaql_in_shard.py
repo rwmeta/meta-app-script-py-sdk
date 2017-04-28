@@ -4,7 +4,6 @@ import os
 from metaappscriptsdk import MetaApp
 
 META = MetaApp()
-# META = MetaApp(meta_url="http://localhost:8080")
 log = META.log
 
 account_id = 137506
