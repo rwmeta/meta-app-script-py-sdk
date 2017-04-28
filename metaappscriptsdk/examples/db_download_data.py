@@ -9,6 +9,7 @@ __DIR__ = os.getcwd() + "/"
 
 configuration = {
     "download": {
+        # "skipHeaders": True, Если не нужны заголовки
         "dbQuery": {
             "command": "SELECT * FROM products WHERE productname ilike '%Gula%' LIMIT 1000"
         }

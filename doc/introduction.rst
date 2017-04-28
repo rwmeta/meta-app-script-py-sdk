@@ -5,10 +5,14 @@
 
 Install
 =======
-pip install metaappscriptsdk
+pip install metaappscriptsdk --upgrade
 
 Последний резил для Python 2 = 0.1.3
 Python 3 начинается с > 0.3.0
+
+Получите файл токен разработчика
+Установите developer_settings.json в домашнюю директорию в папку .rwmeta
+Например: /Users/arturgspb/.rwmeta/developer_settings.json
 
 Full Examples
 =============
