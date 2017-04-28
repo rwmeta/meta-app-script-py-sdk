@@ -9,3 +9,4 @@ Contents:
    introduction
    logging
    rpc
+   metaql

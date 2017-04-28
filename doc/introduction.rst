@@ -5,7 +5,7 @@
 
 Install
 =======
-pip install metaappscriptsdk --upgrade
+pip install metaappscriptsdk --upgrade --no-cache
 
 Последний резил для Python 2 = 0.1.3
 Python 3 начинается с > 0.3.0
