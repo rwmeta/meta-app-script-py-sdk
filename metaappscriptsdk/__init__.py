@@ -136,8 +136,8 @@ class MetaApp(object):
         if is_windows:
             dev_key_path = dev_key_path.replace("/", "\\")
         dev_key_full_path = expanduser("~") + dev_key_path
+        self.log.info(u"Читаем настройки разработчика из локального файла", {"path": dev_key_full_path})
         if os.path.isfile(dev_key_full_path):
-            self.log.info(u"Читаем настройки разработчика из локального файла", {"path": dev_key_full_path})
             with open(dev_key_full_path, 'r') as myfile:
                 self.developer_settings = json.loads(myfile.read())
 
