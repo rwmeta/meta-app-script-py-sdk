@@ -13,6 +13,7 @@ Python 3 начинается с > 0.3.0
 Получите файл токен разработчика
 Установите developer_settings.json в домашнюю директорию в папку .rwmeta
 Например: /Users/arturgspb/.rwmeta/developer_settings.json
+Или для Windows: C:\Users\userXXXXXX\.rwmeta\developer_settings.json
 
 Full Examples
 =============
