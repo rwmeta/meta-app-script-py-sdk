@@ -10,16 +10,15 @@ __DIR__ = os.getcwd() + "/"
 
 q = """
 SELECT
-  engine as platform,
-  campaign_remote_id,
-  SUM(impressions) as impressions,
-  SUM(clicks) as clicks,
-  1.0 * SUM(clicks) / NULLIF(SUM(impressions), 0) * 100 as ctr,
-  ROUND(SUM(cost), 3) as cost
-FROM adplatform.campaign_stats_report
+  campaign_name,
+  client_id,
+  engine,
+  SUM(users) as users
+FROM adplatform.campaign_sessions_stats_report
 WHERE stat_date BETWEEN '2017-03-01' AND '2017-03-31'
-GROUP BY platform, campaign_remote_id
-ORDER BY platform, campaign_remote_id
+AND system = 'googleAnalytics'
+GROUP BY campaign_name, client_id, engine
+ORDER BY campaign_name, client_id, engine
 """
 
 configuration = {
@@ -32,5 +31,5 @@ configuration = {
 }
 META.auth_user_id = 10191
 metaql = META.MetaqlService
-resp = metaql.download_data(configuration, output_file=__DIR__ + 'assets/campaign_stats_report.tsv')
+resp = metaql.download_data(configuration, output_file=__DIR__ + 'assets/campaign_sessions_stats_report.tsv')
 log.info("end")

@@ -31,6 +31,9 @@ METAQL - Это защищенный SQL для запросов к данным
 `Полный список metaql примеров
 <https://github.com/rw-meta/meta-app-script-py-sdk/tree/master/metaappscriptsdk/examples/metaql>`_
 
+`Список отчетов
+<https://github.com/rw-meta/meta-app-script-py-sdk/tree/master/metaappscriptsdk/examples/metaql/metaql_get_schema.py>`_
+
 .. code-block:: python
 
     import os

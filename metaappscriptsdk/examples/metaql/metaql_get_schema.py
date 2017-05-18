@@ -8,8 +8,21 @@ log = META.log
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 __DIR__ = os.getcwd() + "/"
 
+reports = [
+    "campaign_stats_report",
+    "campaign_goal_stats_report",
+    "campaign_calls_stats_report",
+    "campaign_depth_stats_report",
+    "campaign_orders_stats_report",
+    "campaign_sessions_stats_report",
+]
+
 metaql = META.MetaqlService
-resp = metaql.get_schema("adplatform", "campaign_stats_report")
-print("Schema:\n")
-print(pretty_json(resp))
+
+for report_name in reports:
+    resp = metaql.get_schema("adplatform", report_name)
+    print(u"report_name = %s" % str(report_name))
+    print("Schema:\n")
+    print(pretty_json(resp))
+
 log.info("end")
