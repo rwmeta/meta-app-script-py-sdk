@@ -15,6 +15,7 @@ from metaappscriptsdk.logger.logger import Logger
 from metaappscriptsdk.schedule.Schedule import Schedule
 from metaappscriptsdk.services import get_api_call_headers, process_meta_api_error_code
 from metaappscriptsdk.services.DbQueryService import DbQueryService
+from metaappscriptsdk.services.ExportService import ExportService
 from metaappscriptsdk.services.MediaService import MediaService
 from metaappscriptsdk.services.MetaqlService import MetaqlService
 from metaappscriptsdk.worker import Worker
@@ -38,6 +39,7 @@ class MetaApp(object):
 
     MediaService = None
     MetaqlService = None
+    ExportService = None
 
     __default_headers = set()
     __db_list = {}
@@ -85,6 +87,7 @@ class MetaApp(object):
         self.__default_headers = get_api_call_headers(self)
         self.MediaService = MediaService(self, self.__default_headers)
         self.MetaqlService = MetaqlService(self, self.__default_headers)
+        self.ExportService = ExportService(self, self.__default_headers)
 
         if include_worker:
             if not debug:
@@ -197,7 +200,8 @@ class MetaApp(object):
 
         raise ServerError(request)
 
-    def native_api_call(self, service, method, data, options, multipart_form=False, multipart_form_data=None, stream=False, http_path="/api/meta/v1/", http_method='POST'):
+    def native_api_call(self, service, method, data, options, multipart_form=False, multipart_form_data=None, stream=False, http_path="/api/meta/v1/", http_method='POST',
+                        get_params={}):
         """
         :type app: metaappscriptsdk.MetaApp
         :rtype: requests.Response
@@ -218,7 +222,8 @@ class MetaApp(object):
         request = {
             "url": self.meta_url + http_path + service + "/" + method,
             "timeout": (60, 1800),
-            "stream": stream
+            "stream": stream,
+            "params": get_params,
         }
 
         if multipart_form:

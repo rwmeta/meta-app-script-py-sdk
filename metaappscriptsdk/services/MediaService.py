@@ -17,11 +17,11 @@ class MediaService:
         """
         return self.__app.api_call("MediaService", "persist_one", locals(), {})
 
-    def download(self, media_id):
+    def download(self, media_id, as_stream=False):
         """
         Скачивает указанный файл
         :param media_id: string
         :rtype: requests.Response
         """
-        response = self.__app.native_api_call('media', 'd/' + media_id, {}, self.__options, False, None, False, http_path="/", http_method='GET')
+        response = self.__app.native_api_call('media', 'd/' + media_id, {}, self.__options, False, None, as_stream, http_path="/", http_method='GET')
         return response
