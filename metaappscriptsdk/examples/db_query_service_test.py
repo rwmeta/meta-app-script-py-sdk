@@ -4,6 +4,9 @@ from metaappscriptsdk import MetaApp, pretty_json
 META = MetaApp()
 log = META.log
 
+#
+# Db.one
+#
 db_adplatform = META.db("adplatform")
 u = db_adplatform.one("""
     SELECT id, name, info
@@ -14,6 +17,9 @@ u = db_adplatform.one("""
 # Выдаст None
 print(u"u = %s" % u)
 
+#
+# Db.query
+#
 db_adplatform = META.db("adplatform")
 dr = db_adplatform.query("""
     SELECT id, name, info
@@ -56,8 +62,24 @@ user = db_adhands_ui.one("""
 """, {"id": 4501})
 print(u"user = %s" % pretty_json(user))
 
+#
+# Db.update
+#
 db_meta_samples = META.db("meta_samples")
 dr = db_meta_samples.update("""
     UPDATE counters SET inc = inc + 1 WHERE name = :name
 """, {"name": "md_source_update"})
+print(u"dr = %s" % pretty_json(dr))
+
+#
+# Db.batch_update
+#
+db_meta_samples = META.db("meta_samples")
+dr = db_meta_samples.batch_update("""
+    INSERT INTO test_batch_update VALUES (:id, :mytime::timestamp)
+    ON CONFLICT(id) DO UPDATE SET mod_time=NOW()
+""", [
+    {"id": "py_1", "mytime": "2014-01-01"},
+    {"id": "py_2", "mytime": "2014-01-01"},
+])
 print(u"dr = %s" % pretty_json(dr))

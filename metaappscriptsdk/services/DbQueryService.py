@@ -1,6 +1,7 @@
 # coding=utf-8
+import json
 
-from metaappscriptsdk.services import api_call
+import shutil
 
 
 class DbQueryService:
@@ -13,7 +14,10 @@ class DbQueryService:
         self.__options = options
 
     def update(self, command, params=None):
-        return api_call("DbQueryService", "update", locals(), self.__options, self.__app, self.__default_headers)
+        return self.__app.api_call("DbQueryService", "update", locals(), self.__options)
+
+    def batch_update(self, command, params=None):
+        return self.__app.api_call("DbQueryService", "batch_update", locals(), self.__options)
 
     def query(self, command, params=None):
         """
@@ -27,7 +31,7 @@ class DbQueryService:
         :param command: SQL запрос
         :param params: Параметры для prepared statements
         """
-        return api_call("DbQueryService", "query", locals(), self.__options, self.__app, self.__default_headers)
+        return self.__app.api_call("DbQueryService", "query", locals(), self.__options)
 
     def one(self, command, params=None):
         """
@@ -57,3 +61,23 @@ class DbQueryService:
         """
         dr = self.query(command, params)
         return dr['rows']
+
+    def schema_data(self, configuration):
+        params = {"configuration": json.dumps(configuration)}
+        dr = self.__app.native_api_call('db', 'schema-data', params, self.__options, True)
+        return json.loads(dr.text)
+
+    def upload_data(self, file_descriptor, configuration):
+        multipart_form_data = {
+            'file': file_descriptor
+        }
+        params = {"configuration": json.dumps(configuration)}
+        dr = self.__app.native_api_call('db', 'upload-data', params, self.__options, True, multipart_form_data)
+        return json.loads(dr.text)
+
+    def download_data(self, configuration, output_file):
+        params = {"configuration": json.dumps(configuration)}
+        response = self.__app.native_api_call('db', 'download-data', params, self.__options, True, None, True)
+        with open(output_file, 'wb') as out_file:
+            shutil.copyfileobj(response.raw, out_file)
+        del response

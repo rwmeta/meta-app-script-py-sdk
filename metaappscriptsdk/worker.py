@@ -25,12 +25,7 @@ class Worker:
         self.__run(main_fn, 'ignore')
 
     def __run(self, main_fn, resolver_type):
-        tasks = []
-        if self.__app.debug:
-            tasks = self.debug_tasks
-
-        if not tasks:
-            tasks = self.__raw_tasks
+        tasks = self.get_tasks()
         if not tasks:
             return
 
@@ -51,3 +46,12 @@ class Worker:
             os._exit(1)
         finally:
             log.info(u'Стоп', {"seconds": int(time.time() - begin_time)})
+
+    def get_tasks(self):
+        tasks = []
+        if self.__app.debug:
+            tasks = self.debug_tasks
+
+        if not tasks:
+            tasks = self.__raw_tasks
+        return tasks

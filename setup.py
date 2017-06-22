@@ -16,6 +16,8 @@ packages = [
     'metaappscriptsdk',
     'metaappscriptsdk.logger',
     'metaappscriptsdk.services',
+    'metaappscriptsdk.schedule',
+    'metaappscriptsdk.feed',
     'metaappscriptsdk.starter',
 ]
 
@@ -40,9 +42,7 @@ setuptools.setup(
     license='MIT',
 
     classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3'
     ],
     install_requires=reqs,
     packages=packages,
