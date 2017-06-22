@@ -37,7 +37,7 @@ def create_logger(service_id=None, debug=True):
 
     if not debug:
         h = logstash.TCPLogstashHandler(host='192.168.3.27', port=24224)
-        h.setFormatter(LogstashFormatter(message_type="logstash", tags=None, fqdn=True, service_id=service_id, debug=debug))
+        h.setFormatter(LogstashFormatter(message_type="logstash", tags=None, fqdn=False, service_id=service_id, debug=debug))
         root_logger.addHandler(h)
 
 
