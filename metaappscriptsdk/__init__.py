@@ -18,6 +18,7 @@ from metaappscriptsdk.services.DbQueryService import DbQueryService
 from metaappscriptsdk.services.ExportService import ExportService
 from metaappscriptsdk.services.MediaService import MediaService
 from metaappscriptsdk.services.MetaqlService import MetaqlService
+from metaappscriptsdk.services.SettingsService import SettingsService
 from metaappscriptsdk.worker import Worker
 
 
@@ -40,6 +41,7 @@ class MetaApp(object):
     MediaService = None
     MetaqlService = None
     ExportService = None
+    SettingsService = None
 
     __default_headers = set()
     __db_list = {}
@@ -87,6 +89,7 @@ class MetaApp(object):
         self.__default_headers = get_api_call_headers(self)
         self.MediaService = MediaService(self, self.__default_headers)
         self.MetaqlService = MetaqlService(self, self.__default_headers)
+        self.SettingsService = SettingsService(self, self.__default_headers)
         self.ExportService = ExportService(self, self.__default_headers)
 
         if include_worker:
