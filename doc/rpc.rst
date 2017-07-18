@@ -200,3 +200,21 @@ DbQueryService
 
     db = META.db("meta_samples")
     db.upload_data(upload_file, configuration)
+
+
+SettingsService
+---------------
+
+Получайте настройки из стандартного источника настроек
+
+.. code-block:: python
+
+    settings = META.SettingsService
+
+    # Вернуть только данные
+    rwapp_conf = settings.data_get("rwapp")
+
+    # Полная информация о данных + данные
+    full_rwapp_conf = settings.data_get("rwapp", data_only=False)
+
+    onec_url = settings.config_param("rwapp", "app.onec.url")
