@@ -21,3 +21,10 @@ class ExportService:
             "exportDataIds": export_data_ids,
         })
         return json.loads(response.text)
+
+    def export_data_source(self, ds_id):
+        params = {}
+        response = self.__app.native_api_call('export', 'data_source', params, self.__options, get_params={
+            "dataSourceId": ds_id,
+        })
+        return json.loads(response.text)

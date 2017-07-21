@@ -4,6 +4,20 @@ RPC Meta Services
 
 Это API внутренних функций Меты, все эти функции доступны вам через редактор в Web-интерфейсе
 
+SettingsService
+---------------
+
+Рассчитан на чтение параметров из мета конфигурации
+Это удобно когда вы хотите хранить ссылки/токены для вшешних api, какие-то глобальные или частные настройки.
+При этом вы хотите дать некоторым пользователям вохможность это редактировать через интерфейс
+
+Примеры
+-------
+
+`Список примеров
+<https://github.com/rw-meta/meta-app-script-py-sdk/tree/master/metaappscriptsdk/examples/settings_api>`_
+
+
 MediaService
 ------------
 
@@ -186,3 +200,21 @@ DbQueryService
 
     db = META.db("meta_samples")
     db.upload_data(upload_file, configuration)
+
+
+SettingsService
+---------------
+
+Получайте настройки из стандартного источника настроек
+
+.. code-block:: python
+
+    settings = META.SettingsService
+
+    # Вернуть только данные
+    rwapp_conf = settings.data_get("rwapp")
+
+    # Полная информация о данных + данные
+    full_rwapp_conf = settings.data_get("rwapp", data_only=False)
+
+    onec_url = settings.config_param("rwapp", "app.onec.url")
