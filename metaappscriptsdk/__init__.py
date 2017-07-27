@@ -266,6 +266,10 @@ class MetaApp(object):
 
         raise ServerError(request)
 
+    def get_lib_version(self):
+        from metaappscriptsdk import info
+        return info.__version__
+
 
 def pretty_json(obj):
     return json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
