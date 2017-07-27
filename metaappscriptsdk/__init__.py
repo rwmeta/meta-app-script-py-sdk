@@ -54,7 +54,8 @@ class MetaApp(object):
                  ):
         if debug is None:
             debug = os.environ.get('DEBUG', True)
-            include_worker = True
+            if include_worker is None:
+                include_worker = True
             if debug == 'false':
                 debug = False
         self.debug = debug
