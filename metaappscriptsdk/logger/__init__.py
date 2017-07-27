@@ -25,9 +25,11 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def create_logger(service_id=None, debug=True):
+def create_logger(service_id=None, build_num=None, debug=True):
     if not service_id:
         service_id = 'unknown'
+    if not build_num:
+        build_num = 0
     # http://stackoverflow.com/questions/3220284/how-to-customize-the-time-format-for-python-logging
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
@@ -39,7 +41,7 @@ def create_logger(service_id=None, debug=True):
 
     if not debug:
         h = TCPLogstashHandler(host='192.168.3.27', port=24224)
-        h.setFormatter(LogstashFormatter(message_type="logstash", tags=None, fqdn=True, service_id=service_id, debug=debug))
+        h.setFormatter(LogstashFormatter(message_type="logstash", tags=None, fqdn=True, service_id=service_id, build_num=build_num, debug=debug))
         root_logger.addHandler(h)
 
 
@@ -122,9 +124,10 @@ class TCPLogstashHandler(SocketHandler, object):
 
 
 class LogstashFormatter(logstash_formatter.LogstashFormatterBase):
-    def __init__(self, message_type='logstash', tags=None, fqdn=False, service_id='unknown', debug=False):
+    def __init__(self, message_type='logstash', tags=None, fqdn=False, service_id='unknown', build_num=0, debug=False):
         super().__init__(message_type, tags, fqdn)
         self.service_id = service_id
+        self.build_num = build_num
         self.debug = debug
 
     def format(self, record):
@@ -132,6 +135,7 @@ class LogstashFormatter(logstash_formatter.LogstashFormatterBase):
         context = record.context if hasattr(record, 'context') else {}
         context.update(metaappscriptsdk.logger.LOGGER_ENTITY)
         context.setdefault('srv', self.service_id)
+        context.setdefault('bnum', self.build_num)
 
         if record.exc_info:
             context.update(self.format_exception(record))

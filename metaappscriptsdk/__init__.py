@@ -26,6 +26,7 @@ from metaappscriptsdk.worker import Worker
 class MetaApp(object):
     debug = False
     service_id = None
+    build_num = None
     starter_api_url = None
     meta_url = None
     starter = starter_api
@@ -66,6 +67,7 @@ class MetaApp(object):
             deprecated_logs.append(u"Параметр service_id скоро будет удален из MetaApp")
 
         service_id = os.environ.get('SERVICE_ID', "local_debug_serivce")
+        self.build_num = os.environ.get('BUILD_NUM')
         self.service_id = service_id
         create_logger(service_id=service_id, debug=self.debug)
 
