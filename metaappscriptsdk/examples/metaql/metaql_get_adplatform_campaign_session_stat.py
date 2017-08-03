@@ -10,15 +10,14 @@ __DIR__ = os.getcwd() + "/"
 
 q = """
 SELECT
-  campaign_name,
-  client_id,
-  engine,
-  SUM(users) as users
-FROM adplatform.campaign_sessions_stats_report
-WHERE stat_date BETWEEN '2017-03-01' AND '2017-03-31'
+  channel_name,
+  ROUND( COALESCE(SUM(pageviews) / NULLIF(SUM(sessions), 0), 0) , 2) as pv
+FROM adplatform.campaign_avg_depth_stats_report
+WHERE stat_date BETWEEN '2017-08-01' AND '2017-08-31'
 AND system = 'googleAnalytics'
-GROUP BY campaign_name, client_id, engine
-ORDER BY campaign_name, client_id, engine
+and client_id=1460
+GROUP BY channel_name
+ORDER BY channel_name
 """
 
 configuration = {

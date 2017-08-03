@@ -14,7 +14,7 @@ reports = [
     "campaign_calls_stats_report",
     "campaign_depth_stats_report",
     "campaign_orders_stats_report",
-    "campaign_sessions_stats_report",
+    "campaign_avg_depth_stats_report",
 ]
 
 metaql = META.MetaqlService
