@@ -152,7 +152,9 @@ class MetaApp(object):
             with open(dev_key_full_path, 'r') as myfile:
                 self.developer_settings = json.loads(myfile.read())
 
-        env_developer_settings = os.environ.get('X-META-Developer-Settings', None)
+        env_developer_settings = os.environ.get('META_SERVICE_ACCOUNT_SECRET', None)
+        if not env_developer_settings:
+            env_developer_settings = os.environ.get('X-META-Developer-Settings', None)
         if env_developer_settings:
             self.log.info(u"Читаем настройки разработчика из переменной окружения")
             self.developer_settings = json.loads(env_developer_settings)
