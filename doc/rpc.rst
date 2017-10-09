@@ -218,3 +218,22 @@ SettingsService
     full_rwapp_conf = settings.data_get("rwapp", data_only=False)
 
     onec_url = settings.config_param("rwapp", "app.onec.url")
+
+
+IssueService
+---------------
+
+Управляйте тикетами через стандартные методы
+
+.. code-block:: python
+
+    from metaappscriptsdk import MetaApp
+
+    META = MetaApp()
+
+    IssueService = META.IssueService
+
+    test_issue_id = 12067
+    IssueService.add_issue_msg(test_issue_id, "robo test")
+    IssueService.done_issue(test_issue_id)
+

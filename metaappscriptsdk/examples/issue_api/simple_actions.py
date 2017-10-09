@@ -1,6 +1,3 @@
-# coding=utf-8
-import time
-
 from metaappscriptsdk import MetaApp
 
 META = MetaApp()
