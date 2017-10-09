@@ -30,6 +30,20 @@ class IssueService:
               where id = :issue_id
         """, {"issue_id": issue_id, "status_id": status_id})
 
+    def pending_issue(self, issue_id):
+        """
+        Перевести в статус "В ожидании"
+        :param issue_id: int
+        """
+        self.change_issue_status(issue_id, 1)
+
+    def in_progress_issue(self, issue_id):
+        """
+        Взять в работу
+        :param issue_id: int
+        """
+        self.change_issue_status(issue_id, 2)
+
     def reject_issue(self, issue_id):
         """
         Отклонить задачу
