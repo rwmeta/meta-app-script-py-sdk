@@ -6,7 +6,6 @@ from os.path import expanduser
 
 import requests
 import starter_api as starter_api
-from urllib3 import HTTPSConnectionPool
 
 from metaappscriptsdk.exceptions import UnexpectedResponseError, DbQueryError, ServerError
 from metaappscriptsdk.logger import create_logger, eprint
@@ -207,7 +206,7 @@ class MetaApp(object):
                     raise UnexpectedResponseError()
                 else:
                     process_meta_api_error_code(resp.status_code, request, resp.text)
-            except (ConnectionError, HTTPSConnectionPool) as e:
+            except (ConnectionError, TimeoutError) as e:
                 self.log.warning('META API Connection Error. Sleep...', {"e": e})
                 time.sleep(15)
 
@@ -267,7 +266,7 @@ class MetaApp(object):
                     # raise UnexpectedResponseError()
                 else:
                     process_meta_api_error_code(resp.status_code, request, resp.text)
-            except ConnectionError as e:
+            except (ConnectionError, TimeoutError) as e:
                 self.log.warning('META API Connection Error. Sleep...', {"e": e})
                 time.sleep(15)
 
