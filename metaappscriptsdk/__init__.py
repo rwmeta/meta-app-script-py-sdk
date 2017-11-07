@@ -20,6 +20,7 @@ from metaappscriptsdk.services.IssueService import IssueService
 from metaappscriptsdk.services.MediaService import MediaService
 from metaappscriptsdk.services.MetaqlService import MetaqlService
 from metaappscriptsdk.services.SettingsService import SettingsService
+from metaappscriptsdk.services.UserManagementService import UserManagementService
 from metaappscriptsdk.worker import Worker
 
 
@@ -45,6 +46,7 @@ class MetaApp(object):
     ExportService = None
     SettingsService = None
     IssueService = None
+    UserManagementService = None
 
     __default_headers = set()
     __db_list = {}
@@ -98,6 +100,7 @@ class MetaApp(object):
         self.FeedService = FeedService(self, self.__default_headers)
         self.ExportService = ExportService(self, self.__default_headers)
         self.IssueService = IssueService(self, self.__default_headers)
+        self.UserManagementService = UserManagementService(self, self.__default_headers)
 
         if include_worker:
             if not debug:

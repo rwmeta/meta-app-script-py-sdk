@@ -221,7 +221,7 @@ SettingsService
 
 
 IssueService
----------------
+------------
 
 Управляйте тикетами через стандартные методы
 
@@ -237,3 +237,23 @@ IssueService
     IssueService.add_issue_msg(test_issue_id, "robo test")
     IssueService.done_issue(test_issue_id)
 
+
+UserManagement
+--------------
+
+Управляйте пользователями
+
+.. code-block:: python
+
+    from metaappscriptsdk import MetaApp
+
+    META = MetaApp()
+
+    UserManagementService = META.UserManagementService
+    resp = UserManagementService.send_recovery_notice("arturgspb", "meta")
+    print(u"resp = %s" % str(resp))
+    # resp = {'error': None, 'error_details': None, 'success_details': 'Вам отправлено уведомление о сбросе пароля на email art@realweb.ru. Следуйте инструкциям из письма.'}
+
+    resp = UserManagementService.send_recovery_notice("unknown_login_123123123", "meta")
+    print(u"resp = %s" % str(resp))
+    # resp = {'error': 'user_not_found', 'error_details': 'Пользователь с таким логином не найден', 'success_details': None}
