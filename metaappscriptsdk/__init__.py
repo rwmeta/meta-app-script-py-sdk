@@ -191,7 +191,7 @@ class MetaApp(object):
             "timeout": (60, 1800)
         }
 
-        for try_idx in range(6):
+        for try_idx in range(8):
             try:
                 # Пока непонятно почему частенько получаем ошибку:
                 # Failed to establish a new connection: [Errno 110] Connection timed out',))
@@ -209,7 +209,7 @@ class MetaApp(object):
                     raise UnexpectedResponseError()
                 else:
                     process_meta_api_error_code(resp.status_code, request, resp.text)
-            except (ConnectionError, TimeoutError) as e:
+            except (requests.exceptions.ConnectionError, ConnectionError, TimeoutError) as e:
                 self.log.warning('META API Connection Error. Sleep...', {"e": e})
                 time.sleep(15)
 
@@ -250,7 +250,7 @@ class MetaApp(object):
             request['data'] = json.dumps(data)
         request['headers'] = _headers
 
-        for try_idx in range(6):
+        for try_idx in range(8):
             try:
                 # Пока непонятно почему частенько получаем ошибку:
                 # Failed to establish a new connection: [Errno 110] Connection timed out',))
@@ -269,7 +269,7 @@ class MetaApp(object):
                     # raise UnexpectedResponseError()
                 else:
                     process_meta_api_error_code(resp.status_code, request, resp.text)
-            except (ConnectionError, TimeoutError) as e:
+            except (requests.exceptions.ConnectionError, ConnectionError, TimeoutError) as e:
                 self.log.warning('META API Connection Error. Sleep...', {"e": e})
                 time.sleep(15)
 
