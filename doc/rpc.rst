@@ -23,28 +23,35 @@ MediaService
 
 .. code-block:: python
 
-    # coding=utf-8
-    import base64
-
-    from metaappscriptsdk import MetaApp, pretty_json
+    import os
+    from metaappscriptsdk import MetaApp
 
     META = MetaApp()
     log = META.log
 
-    # Получаете инстанс сервиса и делаете запрос к нему
-    result = META.MediaService.persist_one(
-        file_base64_content=base64.b64encode(b"Hello, from META!").decode("utf-8"),
-        filename="req.txt",
-        extension="txt",
-        mime="plain/text",
-        is_private=False,
-        origin="ROBOT",
-    )
-    # Формат ответа стандартный для меты
-    first = result['rows'][0]
-    print(u"result['rows'][0]['url'] = %s" % first['url'])
-    print(u"first = %s" % first)
-    print(u"result = %s" % pretty_json(result))
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    __DIR__ = os.getcwd() + "/"
+
+    upload_file = open(__DIR__ + '../assets/load_data_sample.tsv', 'rb')
+
+    MediaService = META.MediaService
+    result = MediaService.upload(upload_file, {
+        "entityId": 2770,
+        "objectId": "114aecf5-04f1-44fa-8ad1-842b7f31a2df",
+        "info": {"test": True}
+    })
+    print(u"result = %s" % str(result))
+    # result = {'id': 'ae2ef57a-c948-4ba4-8b68-6598352a2eb8', 'name': 'load_data_sample.tsv', 'extension': 'tsv', 'mime': 'text', 'url': None, 'creationTime': '2017-11-08T16:57:46Z', 'userId': 4501, 'fileSize': 256, 'info': {'test': True}, 'private': True, 'downloadUrlPart': '/api/meta/v1/media/d/ae2ef57a-c948-4ba4-8b68-6598352a2eb8'}
+
+    # Скачать файл
+    result = MediaService.download('ae2ef57a-c948-4ba4-8b68-6598352a2eb8',as_stream=False)
+    print(u"result.content = %s" % str(result.content))
+
+    # Информация по файлу
+    resp = MediaService.info('5665d822-2edb-48b8-85a5-817043900a9a')
+    print(u"resp = %s" % str(resp))
+    # resp = {'id': '5665d822-2edb-48b8-85a5-817043900a9a', 'name': 'load_data_sample.tsv', 'extension': 'tsv', 'mime': 'text', 'url': None, 'creationTime': '2017-11-08T16:45:00Z', 'userId': 4501, 'fileSize': 256, 'info': {'test': True}, 'private': True, 'downloadUrlPart': '/api/meta/v1/media/d/5665d822-2edb-48b8-85a5-817043900a9a'}
+
 
 
 
