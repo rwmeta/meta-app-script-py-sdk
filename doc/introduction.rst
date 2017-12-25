@@ -15,6 +15,7 @@ Python 3 начинается с > 0.3.0
 Например:
  - MacOS: /Users/arturgspb/.rwmeta/developer_settings.json
  - Windows: C:\\Users\\userXXXXXX\\.rwmeta\\developer_settings.json
+ - Linux: ~/.rwmeta/developer_settings.json
 
 Full Examples
 =============
