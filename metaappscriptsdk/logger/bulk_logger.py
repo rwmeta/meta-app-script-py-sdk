@@ -16,6 +16,7 @@ class BulkLogger:
             total = None
 
         self.__total = total
+        self.__percent_done = 0
 
     def try_log_part(self, context=None, with_start_message=True):
         """
@@ -29,7 +30,8 @@ class BulkLogger:
             self.__begin_time = time.time()
             context['count'] = self.__counter
             if self.__total:
-                context['percentDone'] = int(self.__counter * 100 / self.__total)
+                self.__percent_done = int(self.__counter * 100 / self.__total)
+                context['percentDone'] = self.__percent_done
                 context['total'] = self.__total
             self.__log.info(msg=self.__log_message, context=context)
             return True
@@ -41,3 +43,9 @@ class BulkLogger:
 
     def finish(self):
         self.__log.info(u"Закончили цикл: " + self.__log_message)
+
+    def get_counter(self):
+        return self.__counter
+
+    def get_percent_done(self):
+        return self.__percent_done
