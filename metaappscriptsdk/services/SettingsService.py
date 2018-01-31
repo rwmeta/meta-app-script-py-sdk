@@ -43,7 +43,6 @@ class SettingsService:
         if not use_cache or data is None:
             response = self.__app.native_api_call('settings', 'data/get/' + conf_alias, {}, self.__options, False, None, False, http_path="/api/meta/v1/", http_method="GET")
             data = json.loads(response.text)
-            print(u"load data")
             self.__data_get_cache[conf_alias] = data
 
         if data_only:
