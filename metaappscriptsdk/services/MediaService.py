@@ -29,7 +29,8 @@ class MediaService:
             'file': file_descriptor
         }
         params = {"settings": json.dumps(settings)}
-        dr = self.__app.native_api_call('media', 'upload', params, self.__options, True, multipart_form_data, False, http_path="/api/meta/v1/", http_method='POST')
+        dr = self.__app.native_api_call('media', 'upload', params, self.__options, True, multipart_form_data, False, http_path="/api/meta/v1/", http_method='POST',
+                                        connect_timeout_sec=60 * 10)
         return json.loads(dr.text)
 
     def download(self, media_id, as_stream=False):
