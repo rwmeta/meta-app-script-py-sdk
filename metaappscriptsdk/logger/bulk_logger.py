@@ -3,7 +3,7 @@ import time
 
 
 class BulkLogger:
-    def __init__(self, log, log_message, total, part_log_time_minutes):
+    def __init__(self, log, log_message, total=None, part_log_time_minutes=1):
         self.__log = log
         self.__begin_time = time.time()
 
@@ -11,9 +11,10 @@ class BulkLogger:
         self.__part_log_time_seconds = part_log_time_minutes * 60
         self.__counter = 0
 
-        if total <= 0:
-            self.__log.info('Нет элементов для логирования. Вероятно список массив пустой')
-            total = None
+        if total is not None:
+            if total <= 0:
+                self.__log.info('Нет элементов для логирования. Вероятно список массив пустой')
+                total = None
 
         self.__total = total
         self.__percent_done = 0
