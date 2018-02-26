@@ -14,6 +14,7 @@ from metaappscriptsdk.logger.logger import Logger
 from metaappscriptsdk.schedule.Schedule import Schedule
 from metaappscriptsdk.services import get_api_call_headers, process_meta_api_error_code
 from metaappscriptsdk.services.DbQueryService import DbQueryService
+from metaappscriptsdk.services.DbService import DbService
 from metaappscriptsdk.services.ExportService import ExportService
 from metaappscriptsdk.services.FeedService import FeedService
 from metaappscriptsdk.services.IssueService import IssueService
@@ -100,6 +101,7 @@ class MetaApp(object):
         self.FeedService = FeedService(self, self.__default_headers)
         self.ExportService = ExportService(self, self.__default_headers)
         self.IssueService = IssueService(self, self.__default_headers)
+        self.DbService = DbService(self, self.__default_headers)
         self.UserManagementService = UserManagementService(self, self.__default_headers)
 
         if include_worker:
