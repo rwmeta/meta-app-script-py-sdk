@@ -39,11 +39,10 @@ def create_logger(service_id=None, build_num=None, debug=True):
 
     root_logger.addHandler(ch)
 
-    # Не пишем в общиэ лог, так как мешаем ему
-    # if not debug:
-    #     h = TCPLogstashHandler(host='192.168.3.27', port=24224)
-    #     h.setFormatter(LogstashFormatter(message_type="logstash", tags=None, fqdn=True, service_id=service_id, build_num=build_num, debug=debug))
-    #     root_logger.addHandler(h)
+    if not debug:
+        h = TCPLogstashHandler(host='192.168.3.27', port=24224)
+        h.setFormatter(LogstashFormatter(message_type="logstash", tags=None, fqdn=True, service_id=service_id, build_num=build_num, debug=debug))
+        root_logger.addHandler(h)
 
 
 class StdoutFormatter(logging.Formatter, object):
