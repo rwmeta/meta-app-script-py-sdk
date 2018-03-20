@@ -58,7 +58,8 @@ class MetaApp(object):
                  include_worker=None
                  ):
         if debug is None:
-            debug = os.environ.get('DEBUG', True)
+            is_prod = os.environ.get('PRODUCTION', False)
+            debug = os.environ.get('DEBUG', not is_prod)
             if include_worker is None:
                 include_worker = True
             if debug == 'false':
