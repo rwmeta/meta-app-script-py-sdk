@@ -86,8 +86,6 @@ class MetaApp(object):
             self.log.warning("#" * 15)
             self.log.warning("#" * 15)
 
-        self.log.info(u'Инициализация службы', {"debug": debug})
-
         if not debug:
             starter_api_url = "http://s2.meta.vmc.loc:28341"
 
@@ -155,7 +153,8 @@ class MetaApp(object):
         if is_windows:
             dev_key_path = dev_key_path.replace("/", "\\")
         dev_key_full_path = expanduser("~") + dev_key_path
-        self.log.info(u"Читаем настройки разработчика из локального файла", {"path": dev_key_full_path})
+        if self.debug:
+            self.log.info(u"Читаем настройки разработчика из локального файла", {"path": dev_key_full_path})
         if os.path.isfile(dev_key_full_path):
             with open(dev_key_full_path, 'r') as myfile:
                 self.developer_settings = json.loads(myfile.read())
@@ -164,7 +163,8 @@ class MetaApp(object):
         if not env_developer_settings:
             env_developer_settings = os.environ.get('X-META-Developer-Settings', None)
         if env_developer_settings:
-            self.log.info(u"Читаем настройки разработчика из переменной окружения")
+            if self.debug:
+                self.log.info(u"Читаем настройки разработчика из переменной окружения")
             self.developer_settings = json.loads(env_developer_settings)
 
         if not self.developer_settings:

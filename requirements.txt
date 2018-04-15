@@ -4,3 +4,4 @@ jsonklog==0.15.0
 six==1.10.0
 croniter==0.3.14
 python-logstash==0.4.6
+fluent-logger==0.9.3

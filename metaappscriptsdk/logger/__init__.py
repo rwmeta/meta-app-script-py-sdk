@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from __future__ import print_function
-
+import atexit
 import logging
 import sys
 import traceback
@@ -10,7 +10,9 @@ import socket
 from logstash import formatter as logstash_formatter
 from logging.handlers import SocketHandler
 from logstash import formatter
-
+from fluent import handler
+import msgpack
+from io import BytesIO
 import metaappscriptsdk
 
 # http://stackoverflow.com/questions/11029717/how-do-i-disable-log-messages-from-the-requests-library
@@ -39,10 +41,57 @@ def create_logger(service_id=None, build_num=None, debug=True):
 
     root_logger.addHandler(ch)
 
+    h = handler.FluentHandler('appscript.' + service_id, host='n3.adp.vmc.loc', port=31891)
+    h.setFormatter(GCloudFormatter())
+    root_logger.addHandler(h)
+
+    def exit_handler():
+        # Обязательно закрыть сокет по доке
+        # https://github.com/fluent/fluent-logger-python
+        h.close()
+
+    atexit.register(exit_handler)
+
     if not debug:
         h = TCPLogstashHandler(host='192.168.3.27', port=24224)
         h.setFormatter(LogstashFormatter(message_type="logstash", tags=None, fqdn=True, service_id=service_id, build_num=build_num, debug=debug))
         root_logger.addHandler(h)
+
+
+class GCloudFormatter(handler.FluentRecordFormatter, object):
+    def format(self, record):
+        # Create message dict
+        context = record.context if hasattr(record, 'context') else {}
+        context.update(metaappscriptsdk.logger.LOGGER_ENTITY)
+
+        if record.exc_info:
+            context.update(self.formatException(record))
+
+        message = {
+            "message": record.getMessage(),
+            "context": context,
+            "severity": record.levelname
+        }
+        return message
+
+    def formatException(self, record):
+        """
+        Format and return the specified exception information as a string.
+        :type record logging.LogRecord
+        :rtype: dict
+        """
+        if record.exc_info is None:
+            return {}
+
+        (exc_type, exc_message, trace) = record.exc_info
+
+        return {
+            'e': {
+                'class': str(exc_type.__name__),  # ZeroDivisionError
+                'message': str(exc_message),  # integer division or modulo by zero
+                'trace': list(traceback.format_tb(trace)),
+            }
+        }
 
 
 class StdoutFormatter(logging.Formatter, object):
