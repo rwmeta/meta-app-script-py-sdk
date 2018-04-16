@@ -11,8 +11,6 @@ from logstash import formatter as logstash_formatter
 from logging.handlers import SocketHandler
 from logstash import formatter
 from fluent import handler
-import msgpack
-from io import BytesIO
 import metaappscriptsdk
 
 # http://stackoverflow.com/questions/11029717/how-do-i-disable-log-messages-from-the-requests-library
@@ -41,16 +39,17 @@ def create_logger(service_id=None, build_num=None, debug=True):
 
     root_logger.addHandler(ch)
 
-    h = handler.FluentHandler('appscript.' + service_id, host='n3.adp.vmc.loc', port=31891)
-    h.setFormatter(GCloudFormatter())
-    root_logger.addHandler(h)
+    if not debug:
+        h = handler.FluentHandler('appscript.' + service_id, host='n3.adp.vmc.loc', port=31891)
+        h.setFormatter(GCloudFormatter())
+        root_logger.addHandler(h)
 
-    def exit_handler():
-        # Обязательно закрыть сокет по доке
-        # https://github.com/fluent/fluent-logger-python
-        h.close()
+        def exit_handler():
+            # Обязательно закрыть сокет по доке
+            # https://github.com/fluent/fluent-logger-python
+            h.close()
 
-    atexit.register(exit_handler)
+        atexit.register(exit_handler)
 
     if not debug:
         h = TCPLogstashHandler(host='192.168.3.27', port=24224)
