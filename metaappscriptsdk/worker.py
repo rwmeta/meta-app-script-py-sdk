@@ -33,13 +33,16 @@ class Worker:
         log.info(u'Старт')
         begin_time = time.time()
         try:
+            log.set_entity("session_id", tasks[0].get("sessionId"))
             if resolver_type == 'multiple':
                 main_fn(tasks)
             elif resolver_type == 'single':
                 for task in tasks:
+                    log.set_entity("task_id", task.get("id"))
                     main_fn(task)
             elif resolver_type == 'ignore':
                 for ignore_ in tasks:
+                    log.set_entity("task_id", ignore_.get("id"))
                     main_fn()
         except Exception as e:
             log.critical(u'Воркер упал из-за неожиданного исключения', {"e": e})
