@@ -25,7 +25,7 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def create_logger(service_id=None, build_num=None, debug=True):
+def create_logger(service_id=None, service_ns=None, build_num=None, debug=True):
     if not service_id:
         service_id = 'unknown'
     if not build_num:
@@ -40,7 +40,7 @@ def create_logger(service_id=None, build_num=None, debug=True):
     root_logger.addHandler(ch)
 
     if not debug:
-        h = handler.FluentHandler('appscript.' + service_id, host='n3.adp.vmc.loc', port=31891)
+        h = handler.FluentHandler(service_ns + '.' + service_id, host='n3.adp.vmc.loc', port=31891)
         h.setFormatter(GCloudFormatter())
         root_logger.addHandler(h)
 

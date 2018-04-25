@@ -71,10 +71,11 @@ class MetaApp(object):
         if service_id:
             deprecated_logs.append(u"Параметр service_id скоро будет удален из MetaApp")
 
+        service_ns = os.environ.get('SERVICE_NAMESPACE', "appscript") # для ns в логах
         service_id = os.environ.get('SERVICE_ID', "local_debug_serivce")
         self.build_num = os.environ.get('BUILD_NUM')
         self.service_id = service_id
-        create_logger(service_id=service_id, build_num=self.build_num, debug=self.debug)
+        create_logger(service_id=service_id, service_ns=service_ns, build_num=self.build_num, debug=self.debug)
 
         self.__read_developer_settings()
         self.user_agent = self.__build_user_agent()
