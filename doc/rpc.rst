@@ -245,8 +245,8 @@ IssueService
     IssueService.done_issue(test_issue_id)
 
 
-UserManagement
---------------
+UserManagementService
+---------------------
 
 Управляйте пользователями
 
@@ -264,3 +264,10 @@ UserManagement
     resp = UserManagementService.send_recovery_notice("unknown_login_123123123", "meta")
     print(u"resp = %s" % str(resp))
     # resp = {'error': 'user_not_found', 'error_details': 'Пользователь с таким логином не найден', 'success_details': None}
+
+
+
+StarterService
+--------------
+
+Для работы с апи запускатора
