@@ -49,6 +49,7 @@ class MetaApp(object):
     SettingsService = None
     IssueService = None
     UserManagementService = None
+    StarterService = None
 
     __default_headers = set()
     __db_list = {}
