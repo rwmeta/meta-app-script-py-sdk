@@ -23,6 +23,7 @@ from metaappscriptsdk.services.MetaqlService import MetaqlService
 from metaappscriptsdk.services.SettingsService import SettingsService
 from metaappscriptsdk.services.UserManagementService import UserManagementService
 from metaappscriptsdk.services.StarterService import StarterService
+from metaappscriptsdk.services.MailService import MailService
 from metaappscriptsdk.worker import Worker
 
 
@@ -50,6 +51,7 @@ class MetaApp(object):
     IssueService = None
     UserManagementService = None
     StarterService = None
+    MailService = None
 
     __default_headers = set()
     __db_list = {}
@@ -104,6 +106,7 @@ class MetaApp(object):
         self.ExportService = ExportService(self, self.__default_headers)
         self.IssueService = IssueService(self, self.__default_headers)
         self.StarterService = StarterService(self, self.__default_headers)
+        self.MailService = MailService(self, self.__default_headers)
         self.DbService = DbService(self, self.__default_headers)
         self.UserManagementService = UserManagementService(self, self.__default_headers)
 
