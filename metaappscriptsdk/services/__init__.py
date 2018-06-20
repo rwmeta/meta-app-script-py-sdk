@@ -1,5 +1,5 @@
 # coding=utf-8
-from metaappscriptsdk.exceptions import AuthError, ServerError, RequestError, UnexpectedError
+from metaappscriptsdk.exceptions import AuthError, ServerError, RequestError, UnexpectedError, NoContentError
 
 
 def get_api_call_headers(app):
@@ -20,7 +20,9 @@ def get_api_call_headers(app):
 
 
 def process_meta_api_error_code(status_code, request, response_text):
-    if status_code == 401:
+    if status_code == 204:
+        raise NoContentError(request)
+    elif status_code == 401:
         raise AuthError(request)
     elif status_code >= 500:
         raise ServerError(response_text)

@@ -14,6 +14,14 @@ class ServerError(Exception):
         return repr(self.request)
 
 
+class NoContentError(Exception):
+    def __init__(self, request):
+        self.request = request
+
+    def __str__(self):
+        return repr(self.request)
+
+
 class RequestError(Exception):
     def __init__(self, request):
         self.request = request
