@@ -48,3 +48,18 @@ class DbQueryError(Exception):
 
 class UnexpectedResponseError(Exception):
     pass
+
+
+class RetryHttpRequestError(Exception):
+    def __init__(self, err_details):
+        self.err_details = err_details
+
+
+class ApiProxyError(Exception):
+    def __init__(self, err_details):
+        self.err_details = err_details
+
+
+class EndOfTriesError(Exception):
+    def __init__(self, err_details=None):
+        self.err_details = err_details

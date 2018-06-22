@@ -13,6 +13,7 @@ from metaappscriptsdk.logger.bulk_logger import BulkLogger
 from metaappscriptsdk.logger.logger import Logger
 from metaappscriptsdk.schedule.Schedule import Schedule
 from metaappscriptsdk.services import get_api_call_headers, process_meta_api_error_code
+from metaappscriptsdk.services.ApiProxyService import ApiProxyService
 from metaappscriptsdk.services.DbQueryService import DbQueryService
 from metaappscriptsdk.services.DbService import DbService
 from metaappscriptsdk.services.ExportService import ExportService
@@ -33,11 +34,15 @@ class MetaApp(object):
     build_num = None
     starter_api_url = None
     meta_url = None
+    api_proxy_url = None
     starter = starter_api
     log = Logger()
     schedule = Schedule()
     worker = None
-    user_agent = None
+
+    # Будет поставляться в конец UserAgent
+    user_agent_postfix = ""
+
     developer_settings = None
 
     # Пользователь, из под которого пройдет авторизация после того,
@@ -52,6 +57,7 @@ class MetaApp(object):
     UserManagementService = None
     StarterService = None
     MailService = None
+    ApiProxyService = None
 
     __default_headers = set()
     __db_list = {}
@@ -59,6 +65,7 @@ class MetaApp(object):
     def __init__(self, service_id=None, debug=None,
                  starter_api_url="http://STUB_URL",
                  meta_url="https://meta.realweb.ru",
+                 api_proxy_url="http://apiproxy.apis.kb.1ad.ru",
                  include_worker=None
                  ):
         if debug is None:
@@ -69,20 +76,20 @@ class MetaApp(object):
             if debug == 'false':
                 debug = False
         self.debug = debug
+        self.api_proxy_url = api_proxy_url
 
         deprecated_logs = []
 
         if service_id:
             deprecated_logs.append(u"Параметр service_id скоро будет удален из MetaApp")
 
-        service_ns = os.environ.get('SERVICE_NAMESPACE', "appscript") # для ns в логах
+        service_ns = os.environ.get('SERVICE_NAMESPACE', "appscript")  # для ns в логах
         service_id = os.environ.get('SERVICE_ID', "local_debug_serivce")
-        self.build_num = os.environ.get('BUILD_NUM')
+        self.build_num = os.environ.get('BUILD_NUM', '0')
         self.service_id = service_id
         create_logger(service_id=service_id, service_ns=service_ns, build_num=self.build_num, debug=self.debug)
 
         self.__read_developer_settings()
-        self.user_agent = self.__build_user_agent()
 
         for deprecated_log_msg in deprecated_logs:
             self.log.warning("#" * 15)
@@ -109,6 +116,7 @@ class MetaApp(object):
         self.MailService = MailService(self, self.__default_headers)
         self.DbService = DbService(self, self.__default_headers)
         self.UserManagementService = UserManagementService(self, self.__default_headers)
+        self.ApiProxyService = ApiProxyService(self, self.__default_headers)
 
         if include_worker:
             if not debug:
@@ -145,9 +153,9 @@ class MetaApp(object):
             self.__db_list[db_key] = DbQueryService(self, self.__default_headers, {"db_alias": db_alias, "dbAlias": db_alias, "shard_find_key": shard_key, "shardKey": shard_key})
         return self.__db_list[db_key]
 
-    def __build_user_agent(self):
-        v = sys.version_info
-        return self.service_id + " | Python " + str(v.major) + "." + str(v.minor) + "." + str(v.micro) + " META SDK os:" + os.name
+    @property
+    def user_agent(self):
+        return self.service_id + " | b" + self.build_num + (' | ' + self.user_agent_postfix if self.user_agent_postfix else "")
 
     def __read_developer_settings(self):
         """
@@ -201,7 +209,7 @@ class MetaApp(object):
             "timeout": (60, 1800)
         }
 
-        for try_idx in range(8):
+        for try_idx in range(20):
             try:
                 # Пока непонятно почему частенько получаем ошибку:
                 # Failed to establish a new connection: [Errno 110] Connection timed out',))
@@ -260,7 +268,7 @@ class MetaApp(object):
             request['data'] = json.dumps(data)
         request['headers'] = _headers
 
-        for try_idx in range(8):
+        for try_idx in range(20):
             try:
                 # Пока непонятно почему частенько получаем ошибку:
                 # Failed to establish a new connection: [Errno 110] Connection timed out',))

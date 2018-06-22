@@ -1,4 +1,3 @@
-# coding=utf-8
 from metaappscriptsdk.exceptions import AuthError, ServerError, RequestError, UnexpectedError, NoContentError
 
 
