@@ -1,4 +1,3 @@
-# coding=utf-8
 import json
 
 import shutil
@@ -15,9 +14,6 @@ class DbQueryService:
 
     def update(self, command, params=None):
         return self.__app.api_call("DbQueryService", "update", locals(), self.__options)
-
-    def batch_update(self, command, params=None):
-        return self.__app.api_call("DbQueryService", "batch_update", locals(), self.__options)
 
     def query(self, command, params=None):
         """
@@ -81,3 +77,24 @@ class DbQueryService:
         with open(output_file, 'wb') as out_file:
             shutil.copyfileobj(response.raw, out_file)
         del response
+
+    def batch_update(self, command, rows):
+        """
+        Для массовой вставки умеренных объемов 1-5к записей за вызов
+
+        :param command: SQL insert or updtae
+        :param rows: list of dict
+        :return: dict
+        """
+        request = {
+            "database": {
+                "alias": self.__options['dbAlias']
+            },
+            "batchUpdate": {
+                "command": command,
+                "rows": rows,
+                "shardKey": self.__options.get('shardKey'),
+            }
+        }
+        dr = self.__app.native_api_call('db', 'batch-update', request, self.__options, False)
+        return json.loads(dr.text)
