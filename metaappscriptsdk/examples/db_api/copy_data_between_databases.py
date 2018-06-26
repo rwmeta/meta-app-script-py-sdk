@@ -1,6 +1,8 @@
 import os
-from metaappscriptsdk import MetaApp, pretty_json
+from metaappscriptsdk import MetaApp
 from datetime import datetime
+
+from metaappscriptsdk.utils import pretty_json
 
 t1 = datetime.now()
 

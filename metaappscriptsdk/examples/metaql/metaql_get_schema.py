@@ -1,6 +1,7 @@
 import os
 
-from metaappscriptsdk import MetaApp, pretty_json
+from metaappscriptsdk import MetaApp
+from metaappscriptsdk.utils import pretty_json
 
 META = MetaApp()
 log = META.log

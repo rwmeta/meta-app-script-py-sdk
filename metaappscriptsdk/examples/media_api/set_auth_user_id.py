@@ -1,7 +1,8 @@
 # coding=utf-8
 import base64
 
-from metaappscriptsdk import MetaApp, pretty_json
+from metaappscriptsdk import MetaApp
+from metaappscriptsdk.utils import pretty_json
 
 META = MetaApp(meta_url="http://localhost:8080")
 log = META.log
