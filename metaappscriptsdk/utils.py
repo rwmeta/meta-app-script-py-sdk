@@ -1,5 +1,6 @@
 # Супер мелкие функции, которые нужны в от 3 исптозований
 import json
+import jwt
 
 
 def chunks(list_, count_items_in_chunk):
@@ -21,3 +22,15 @@ def pretty_json(obj):
     :return:
     """
     return json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
+
+
+def decode_jwt(input_text, secure_key):
+    """
+    Раскодирование строки на основе ключа
+    :param input_text: исходная строка
+    :param secure_key: секретный ключ
+    :return:
+    """
+    encoded = (input_text.split(":")[1]).encode('utf-8')
+    decoded = jwt.decode(encoded, secure_key)
+    return decoded['sub']
