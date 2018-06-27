@@ -15,10 +15,10 @@ class FeedService:
         self.__data_get_flatten_cache = {}
         self.__metadb = app.db("meta")
 
-    def get_feed(self, ds_id):
+    def get_feed(self, datasource_id):
         """
         Получение настроек для фида
-        :param ds_id: идентификатор фида
+        :param datasource_id: идентификатор фида
         :return: FeedDataSource
         """
         info = self.__metadb.one(
@@ -28,14 +28,18 @@ class FeedService:
                  , to_json(fct) as connector_type
                  , to_json(ctp) as connector_type_preset,
                  , json_build_object('email', u.email, 'full_name', u.full_name) as author_user
-            FROM meta.feed_datasource ds
-            LEFT JOIN meta.feed_connector fc ON fc.id=ds.connector_id
-            LEFT JOIN meta.feed_connector_type fct ON fct.id=fc.connector_type_id
-            LEFT JOIN meta.feed_connector_type_preset ctp ON ctp.id=ds.connector_type_preset_id
-            LEFT JOIN meta.user_list u ON u.id=ds.author_user_id
-            WHERE ds.id = :ds_id::uuid
+              FROM meta.feed_datasource ds
+              LEFT JOIN meta.feed_connector fc 
+                     ON fc.id=ds.connector_id
+              LEFT JOIN meta.feed_connector_type fct 
+                     ON fct.id=fc.connector_type_id
+              LEFT JOIN meta.feed_connector_type_preset ctp 
+                     ON ctp.id=ds.connector_type_preset_id
+              LEFT JOIN meta.user_list u 
+                     ON u.id=ds.author_user_id
+             WHERE ds.id = :datasource_id::uuid
             """,
-            {"ds_id": ds_id}
+            {"datasource_id": datasource_id}
         )
         return FeedDataSource(**info)
 
