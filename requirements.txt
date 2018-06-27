@@ -5,3 +5,4 @@ six==1.10.0
 croniter==0.3.14
 python-logstash==0.4.6
 fluent-logger==0.9.3
+PyJWT==1.5.3
