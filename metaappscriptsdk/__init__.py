@@ -17,6 +17,7 @@ from metaappscriptsdk.services.ApiProxyService import ApiProxyService
 from metaappscriptsdk.services.DbQueryService import DbQueryService
 from metaappscriptsdk.services.DbService import DbService
 from metaappscriptsdk.services.ExportService import ExportService
+from metaappscriptsdk.services.ExternalSystemService import ExternalSystemService
 from metaappscriptsdk.services.FeedService import FeedService
 from metaappscriptsdk.services.IssueService import IssueService
 from metaappscriptsdk.services.MediaService import MediaService
@@ -117,6 +118,7 @@ class MetaApp(object):
         self.DbService = DbService(self, self.__default_headers)
         self.UserManagementService = UserManagementService(self, self.__default_headers)
         self.ApiProxyService = ApiProxyService(self, self.__default_headers)
+        self.ExternalSystemService = ExternalSystemService(self, self.__default_headers)
 
         if include_worker:
             if not debug:
