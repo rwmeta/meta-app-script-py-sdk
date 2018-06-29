@@ -13,8 +13,8 @@ class ExternalSystemService:
         self.__metadb = app.db("meta")
         self.__crypt_params = app.SettingsService.data_get("crypt_params")
 
-    def get_ex_access(self, ex_access_id):
-        return self.__metadb.one(
+    def get_access(self, ex_access_id):
+        ex_access = self.__metadb.one(
             """
             SELECT token_info
                  , form_data 
@@ -24,10 +24,7 @@ class ExternalSystemService:
             {"id": ex_access_id}
         )
 
-    def get_token(self, conn_ex_access_id):
-        """
-        Возвращает токен для подключения
-        :param conn_ex_access_id:
-        :return:
-        """
-        return decode_jwt(self.get_ex_access(conn_ex_access_id)['token_info']['accessToken'], self.__crypt_params)
+        ex_access['token_info']['accessToken'] = decode_jwt(ex_access['token_info'].get('accessToken'), self.__crypt_params)
+        ex_access['token_info']['refreshToken'] = decode_jwt(ex_access['token_info'].get('refreshToken'), self.__crypt_params)
+
+        return ex_access
