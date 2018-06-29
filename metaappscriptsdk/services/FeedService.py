@@ -1,6 +1,6 @@
 # coding=utf-8
 import json
-
+from tempfile import NamedTemporaryFile
 
 
 class FeedService:
@@ -14,6 +14,8 @@ class FeedService:
         self.__data_get_cache = {}
         self.__data_get_flatten_cache = {}
         self.__metadb = app.db("meta")
+        self.__media = app.MediaService
+        self.__starter = app.StarterService
 
     def get_feed(self, datasource_id):
         """
@@ -42,6 +44,39 @@ class FeedService:
             {"datasource_id": datasource_id}
         )
         return FeedDataSource(**info)
+
+    def get_data(self, task, media_metadata, file_suffix, callback):
+        """
+        Сохранение медиафайла
+        :param task:
+        :param media_metadata:
+        :param file_suffix:
+        :param callback:
+        :return:
+        """
+        result_data = task['result_data']
+        tmp_file = NamedTemporaryFile(delete=False, suffix=file_suffix)
+        self.__app.log.info("Открываем файл", {"filename": tmp_file.name})
+        with open(tmp_file.name, 'wb') as f:
+            callback(f)
+
+        self.__app.log.info("start media upload")
+
+        result_data['stage_id'] = "persist_media_file"
+        self.__starter.update_task_result_data(task)
+
+        result = self.__media.upload(open(tmp_file.name), {
+            "ttlInSec": 60 * 60 * 24,  # 24h
+            "entityId": 2770,
+            "objectId": task.get('data', {}).get("ds_id"),
+            "info": {"metadata": media_metadata}
+        })
+
+        result_data['stage_id'] = "generate_media_finish"
+        result_data['media_id'] = result['id']
+        self.__starter.update_task_result_data(task)
+
+        return result
 
     def datasource_process(self, datasource_id):
         """

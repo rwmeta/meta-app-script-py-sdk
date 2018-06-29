@@ -31,6 +31,9 @@ def decode_jwt(input_text, secure_key):
     :param secure_key: секретный ключ
     :return:
     """
+    if input_text is None:
+        return None
+
     encoded = (input_text.split(":")[1]).encode('utf-8')
     decoded = jwt.decode(encoded, secure_key)
     return decoded['sub']
