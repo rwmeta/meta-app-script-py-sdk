@@ -28,7 +28,7 @@ class FeedService:
             SELECT to_json(ds) as datasource
                  , to_json(fc) as connector
                  , to_json(fct) as connector_type
-                 , to_json(ctp) as connector_type_preset,
+                 , to_json(ctp) as connector_type_preset
                  , json_build_object('email', u.email, 'full_name', u.full_name) as author_user
               FROM meta.feed_datasource ds
               LEFT JOIN meta.feed_connector fc 
