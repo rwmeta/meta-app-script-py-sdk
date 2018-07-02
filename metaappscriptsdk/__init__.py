@@ -63,11 +63,11 @@ class MetaApp(object):
     __default_headers = set()
     __db_list = {}
 
-    def __init__(self, service_id=None, debug=None,
-                 starter_api_url="http://STUB_URL",
-                 meta_url="https://meta.realweb.ru",
-                 api_proxy_url="http://apiproxy.apis.kb.1ad.ru",
-                 include_worker=None
+    def __init__(self, service_id: str = None, debug: bool = None,
+                 starter_api_url: str = None,
+                 meta_url: str = None,
+                 api_proxy_url: str = None,
+                 include_worker: bool = None
                  ):
         if debug is None:
             is_prod = os.environ.get('PRODUCTION', False)
@@ -77,12 +77,16 @@ class MetaApp(object):
             if debug == 'false':
                 debug = False
         self.debug = debug
-        self.api_proxy_url = api_proxy_url
 
-        deprecated_logs = []
+        self.meta_url = os.environ.get("META_URL", meta_url if meta_url else "https://meta.realweb.ru")
+        self.api_proxy_url = os.environ.get("API_PROXY_URL", api_proxy_url if api_proxy_url else "http://apiproxy.apis.kb.1ad.ru")
+
+        if debug and not starter_api_url:
+            starter_api_url = "http://STUB_URL"
+        self.starter_api_url = os.environ.get("STARTER_URL", starter_api_url if starter_api_url else "http://s2.meta.vmc.loc:28341")
 
         if service_id:
-            deprecated_logs.append(u"Параметр service_id скоро будет удален из MetaApp")
+            self.log.warning("Параметр service_id скоро будет удален из MetaApp")
 
         service_ns = os.environ.get('SERVICE_NAMESPACE', "appscript")  # для ns в логах
         service_id = os.environ.get('SERVICE_ID', "local_debug_serivce")
@@ -92,18 +96,6 @@ class MetaApp(object):
 
         self.__read_developer_settings()
 
-        for deprecated_log_msg in deprecated_logs:
-            self.log.warning("#" * 15)
-            self.log.warning("#" * 15)
-            self.log.warning("# " + deprecated_log_msg)
-            self.log.warning("#" * 15)
-            self.log.warning("#" * 15)
-
-        if not debug:
-            starter_api_url = "http://s2.meta.vmc.loc:28341"
-
-        self.meta_url = meta_url
-        self.starter_api_url = starter_api_url
         starter_api.init(self.starter_api_url)
 
         self.__default_headers = get_api_call_headers(self)
@@ -121,13 +113,7 @@ class MetaApp(object):
         self.ExternalSystemService = ExternalSystemService(self, self.__default_headers)
 
         if include_worker:
-            if not debug:
-                print("Waiting stdin...")
-                stdin = ''.join(sys.stdin.readlines())
-            else:
-                print("Empty stdin...")
-                stdin = "[]"
-
+            stdin = "[]" if debug else ''.join(sys.stdin.readlines())
             self.worker = Worker(self, stdin)
 
     def bulk_log(self, log_message=u"Еще одна пачка обработана", total=None, part_log_time_minutes=5):
@@ -298,4 +284,3 @@ class MetaApp(object):
     def get_lib_version(self):
         from metaappscriptsdk import info
         return info.__version__
-
