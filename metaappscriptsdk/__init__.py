@@ -78,12 +78,12 @@ class MetaApp(object):
                 debug = False
         self.debug = debug
 
-        self.meta_url = os.environ.get("META_URL", meta_url if meta_url else "https://meta.realweb.ru")
-        self.api_proxy_url = os.environ.get("API_PROXY_URL", api_proxy_url if api_proxy_url else "http://apiproxy.apis.kb.1ad.ru")
+        self.meta_url = os.environ.get("META_URL", meta_url or "https://meta.realweb.ru")
+        self.api_proxy_url = os.environ.get("API_PROXY_URL", api_proxy_url or "http://apiproxy.apis.kb.1ad.ru")
 
         if debug and not starter_api_url:
             starter_api_url = "http://STUB_URL"
-        self.starter_api_url = os.environ.get("STARTER_URL", starter_api_url if starter_api_url else "http://s2.meta.vmc.loc:28341")
+        self.starter_api_url = os.environ.get("STARTER_URL", starter_api_url or "http://s2.meta.vmc.loc:28341")
 
         if service_id:
             self.log.warning("Параметр service_id скоро будет удален из MetaApp")
