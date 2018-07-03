@@ -102,7 +102,6 @@ class MetaApp(object):
         self.MediaService = MediaService(self, self.__default_headers)
         self.MetaqlService = MetaqlService(self, self.__default_headers)
         self.SettingsService = SettingsService(self, self.__default_headers)
-        self.FeedService = FeedService(self, self.__default_headers)
         self.ExportService = ExportService(self, self.__default_headers)
         self.IssueService = IssueService(self, self.__default_headers)
         self.StarterService = StarterService(self, self.__default_headers)
@@ -111,6 +110,7 @@ class MetaApp(object):
         self.UserManagementService = UserManagementService(self, self.__default_headers)
         self.ApiProxyService = ApiProxyService(self, self.__default_headers)
         self.ExternalSystemService = ExternalSystemService(self, self.__default_headers)
+        self.FeedService = FeedService(self, self.__default_headers)
 
         if include_worker:
             stdin = "[]" if debug else ''.join(sys.stdin.readlines())
