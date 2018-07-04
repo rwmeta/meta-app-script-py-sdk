@@ -71,7 +71,6 @@ class FeedService:
 
         result_data['stage_id'] = "persist_media_file"
         self.__starter.update_task_result_data(task)
-
         result = self.__media.upload(open(tmp_file.name), {
             "ttlInSec": 60 * 60 * 24,  # 24h
             "entityId": 2770,
