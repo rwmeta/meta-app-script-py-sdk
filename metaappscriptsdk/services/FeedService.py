@@ -2,7 +2,7 @@
 import json
 from tempfile import NamedTemporaryFile
 
-FORMAT_TYPES = {
+SOURCE_FORMAT_EXTENSION = {
     'CSV': 'csv',
     'TSV': 'tsv',
     'JSON_NEWLINE': 'json'
@@ -62,7 +62,7 @@ class FeedService:
         task = self.__app.worker.current_task
         media_metadata = datasource.connector_type_preset['preset_data']['media_metadata']
         result_data = task['result_data']
-        tmp_file = NamedTemporaryFile(delete=False, suffix=FORMAT_TYPES.get(media_metadata['sourceFormat']))
+        tmp_file = NamedTemporaryFile(delete=False, suffix=SOURCE_FORMAT_EXTENSION.get(media_metadata['sourceFormat']))
         self.__app.log.info("Открываем файл", {"filename": tmp_file.name})
         with open(tmp_file.name, 'wb') as f:
             callback(f)
