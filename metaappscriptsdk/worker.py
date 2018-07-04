@@ -14,6 +14,7 @@ class Worker:
         self.__app = app
         self.__raw_tasks = json.loads(stdin)
         self.debug_tasks = None
+        self.__current_task = None
 
     def single_task(self, main_fn=None):
         self.__run(main_fn, 'single')
@@ -25,7 +26,7 @@ class Worker:
         self.__run(main_fn, 'ignore')
 
     def __run(self, main_fn, resolver_type):
-        tasks = self.get_tasks()
+        tasks = self.__get_tasks()
         if not tasks:
             return
 
@@ -38,6 +39,7 @@ class Worker:
                 main_fn(tasks)
             elif resolver_type == 'single':
                 for task in tasks:
+                    self.__current_task = task
                     log.set_entity("task_id", task.get("id"))
                     main_fn(task)
             elif resolver_type == 'ignore':
@@ -50,7 +52,7 @@ class Worker:
         finally:
             log.info(u'Стоп', {"seconds": int(time.time() - begin_time)})
 
-    def get_tasks(self):
+    def __get_tasks(self):
         tasks = []
         if self.__app.debug:
             tasks = self.debug_tasks
@@ -58,3 +60,9 @@ class Worker:
         if not tasks:
             tasks = self.__raw_tasks
         return tasks
+
+    prop = property()
+
+    @prop.getter
+    def current_task(self):
+        return self.__current_task

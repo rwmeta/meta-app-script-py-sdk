@@ -2,6 +2,11 @@
 import json
 from tempfile import NamedTemporaryFile
 
+SOURCE_FORMAT_EXTENSION = {
+    'CSV': 'csv',
+    'TSV': 'tsv',
+    'JSON_NEWLINE': 'json'
+}
 
 class FeedService:
     def __init__(self, app, default_headers):
@@ -45,7 +50,7 @@ class FeedService:
         )
         return FeedDataSource(**info)
 
-    def get_data(self, task, media_metadata, file_suffix, callback):
+    def get_data(self, datasource, callback):
         """
         Сохранение медиафайла
         :param task:
@@ -54,8 +59,10 @@ class FeedService:
         :param callback:
         :return:
         """
+        task = self.__app.worker.current_task
+        media_metadata = datasource.connector_type_preset['preset_data']['media_metadata']
         result_data = task['result_data']
-        tmp_file = NamedTemporaryFile(delete=False, suffix=file_suffix)
+        tmp_file = NamedTemporaryFile(delete=False, suffix=SOURCE_FORMAT_EXTENSION.get(media_metadata['sourceFormat']))
         self.__app.log.info("Открываем файл", {"filename": tmp_file.name})
         with open(tmp_file.name, 'wb') as f:
             callback(f)
@@ -64,7 +71,6 @@ class FeedService:
 
         result_data['stage_id'] = "persist_media_file"
         self.__starter.update_task_result_data(task)
-
         result = self.__media.upload(open(tmp_file.name), {
             "ttlInSec": 60 * 60 * 24,  # 24h
             "entityId": 2770,
