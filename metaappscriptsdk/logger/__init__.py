@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from __future__ import print_function
 import atexit
 import logging
@@ -25,11 +23,10 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def create_logger(service_id=None, service_ns=None, build_num=None, debug=True):
+def create_logger(service_id=None, service_ns=None, gcloud_log_host_port=None, debug=True):
     if not service_id:
         service_id = 'unknown'
-    if not build_num:
-        build_num = 0
+
     # http://stackoverflow.com/questions/3220284/how-to-customize-the-time-format-for-python-logging
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
@@ -40,7 +37,11 @@ def create_logger(service_id=None, service_ns=None, build_num=None, debug=True):
     root_logger.addHandler(ch)
 
     if not debug:
-        h = handler.FluentHandler(service_ns + '.' + service_id, host='n3.adp.vmc.loc', port=31891)
+        gcloud_logs_parts = gcloud_log_host_port.split(':')
+        if len(gcloud_logs_parts) != 2:
+            raise ValueError("GCLOUD_LOG_HOST_PORT задан неправильно. Проверьте правильность написания HOST:PORT")
+
+        h = handler.FluentHandler(service_ns + '.' + service_id, host=gcloud_logs_parts[0], port=int(gcloud_logs_parts[1]))
         h.setFormatter(GCloudFormatter())
         root_logger.addHandler(h)
 
@@ -50,11 +51,6 @@ def create_logger(service_id=None, service_ns=None, build_num=None, debug=True):
             h.close()
 
         atexit.register(exit_handler)
-
-    if not debug:
-        h = TCPLogstashHandler(host='192.168.3.27', port=24224)
-        h.setFormatter(LogstashFormatter(message_type="logstash", tags=None, fqdn=True, service_id=service_id, build_num=build_num, debug=debug))
-        root_logger.addHandler(h)
 
 
 class GCloudFormatter(handler.FluentRecordFormatter, object):
@@ -131,89 +127,3 @@ class StdoutFormatter(logging.Formatter, object):
                 s = s + record.exc_text.decode(sys.getfilesystemencoding(),
                                                'replace')
         return s
-
-
-class TCPLogstashHandler(SocketHandler, object):
-    """Python logging handler for Logstash. Sends events over TCP.
-    :param host: The host of the logstash server.
-    :param port: The port of the logstash server (default 5959).
-    :param message_type: The type of the message (default logstash).
-    :param fqdn; Indicates whether to show fully qualified domain name or not (default False).
-    :param version: version of logstash event schema (default is 0).
-    :param tags: list of tags for a logger (default is None).
-    """
-
-    def __init__(self, host, port=5959, message_type='logstash', tags=None, fqdn=False, version=0):
-        super(TCPLogstashHandler, self).__init__(host, port)
-        if version == 1:
-            self.formatter = formatter.LogstashFormatterVersion1(message_type, tags, fqdn)
-        else:
-            self.formatter = formatter.LogstashFormatterVersion0(message_type, tags, fqdn)
-
-    def makePickle(self, record):
-        return self.formatter.format(record) + b'\n'
-
-    def makeSocket(self, timeout=10):
-        """
-        A factory method which allows subclasses to define the precise
-        type of socket they want.
-        """
-        if self.port is not None:
-            result = socket.create_connection(self.address, timeout=timeout)
-        else:
-            result = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            result.settimeout(timeout)
-            try:
-                result.connect(self.address)
-            except OSError:
-                result.close()
-                raise
-        return result
-
-
-class LogstashFormatter(logstash_formatter.LogstashFormatterBase):
-    def __init__(self, message_type='logstash', tags=None, fqdn=False, service_id='unknown', build_num=0, debug=False):
-        super().__init__(message_type, tags, fqdn)
-        self.service_id = service_id
-        self.build_num = build_num
-        self.debug = debug
-
-    def format(self, record):
-        # Create message dict
-        context = record.context if hasattr(record, 'context') else {}
-        context.update(metaappscriptsdk.logger.LOGGER_ENTITY)
-        context.setdefault('srv', self.service_id)
-        context.setdefault('bnum', self.build_num)
-
-        if record.exc_info:
-            context.update(self.format_exception(record))
-
-        message = {
-            "message": record.getMessage(),
-            "context": context,
-            "level": record.levelno,
-            "level_name": record.levelname,
-            "channel": "es.metaappscript",
-            "extra": {}
-        }
-
-        return self.serialize(message)
-
-    def formatException(self, record):
-        """
-        Format and return the specified exception information as a string.
-        :type record logging.LogRecord
-        :rtype: dict
-        """
-        if record.exc_info is None:
-            return {}
-
-        (exc_type, exc_message, trace) = record.exc_info
-
-        return {
-            'e': {
-                'class': str(exc_type.__name__),  # ZeroDivisionError
-                'message': str(exc_message),  # integer division or modulo by zero
-                'trace': list(traceback.format_tb(trace)),
-            }
-        }

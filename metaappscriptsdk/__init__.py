@@ -88,11 +88,12 @@ class MetaApp(object):
         if service_id:
             self.log.warning("Параметр service_id скоро будет удален из MetaApp")
 
+        gcloud_log_host_port = os.environ.get("GCLOUD_LOG_HOST_PORT", "n3.adp.vmc.loc:31891")
         service_ns = os.environ.get('SERVICE_NAMESPACE', "appscript")  # для ns в логах
         service_id = os.environ.get('SERVICE_ID', "local_debug_serivce")
         self.build_num = os.environ.get('BUILD_NUM', '0')
         self.service_id = service_id
-        create_logger(service_id=service_id, service_ns=service_ns, build_num=self.build_num, debug=self.debug)
+        create_logger(service_id=service_id, service_ns=service_ns, gcloud_log_host_port=gcloud_log_host_port, debug=self.debug)
 
         self.__read_developer_settings()
 
