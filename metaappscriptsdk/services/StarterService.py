@@ -1,9 +1,12 @@
 import json
+from time import sleep
 
-import collections
+import requests
 
 
 class StarterService:
+    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+
     def __init__(self, app, default_headers):
         """
         Прямые запросы к БД скорее всего уйдут в апи запускатора, так как скорее всего пбудет много БД для тасков запускатора, так как
@@ -17,6 +20,7 @@ class StarterService:
         self.__data_get_cache = {}
         self.__metadb = app.db("meta")
         self.log = app.log
+        self.max_retries = 30
 
     def update_task_result_data(self, task):
         self.log.info("Сохраняем состояние в БД", {"result_data": task['result_data']})
@@ -65,3 +69,36 @@ class StarterService:
 
             if task_info['status'] != 'NEW' and task_info['status'] != 'PROCESSING':
                 break
+
+    def submit(self, service_id: str, data: dict = None):
+        """
+        Отправить задачу в запускатор
+
+        :param service_id: ID службы. Например "meta.docs_generate"
+        :param data: Полезная нагрузка задачи
+        :return: dict
+        """
+        if self.__app.starter_api_url == 'http://STUB_URL':
+            self.log.info(u'STARTER CLIENT DEV MODE Задача условно поставлена')
+            return
+
+        task = {"serviceId": service_id, "data": data}
+        url = self.__app.starter_api_url + '/services/' + service_id + '/tasks'
+        last_e = None
+        for idx in range(self.max_retries):
+            try:
+                resp = requests.post(
+                    url=url,
+                    data=json.dumps(task),
+                    headers=self.headers,
+                    timeout=15
+                )
+                try:
+                    return json.loads(resp.text)
+                except:
+                    raise IOError("Starter response read error: " + resp.text)
+            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+                # При ошибках подключения пытаемся еще раз
+                last_e = e
+                sleep(3)
+        raise last_e

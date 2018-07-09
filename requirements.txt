@@ -1,4 +1,3 @@
-starter_api
 elasticsearch==2.3.0
 jsonklog==0.15.0
 six==1.10.0

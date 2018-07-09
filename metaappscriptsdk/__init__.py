@@ -5,7 +5,6 @@ import time
 from os.path import expanduser
 
 import requests
-import starter_api as starter_api
 
 from metaappscriptsdk.exceptions import UnexpectedResponseError, DbQueryError, ServerError
 from metaappscriptsdk.logger import create_logger, eprint
@@ -36,7 +35,6 @@ class MetaApp(object):
     starter_api_url = None
     meta_url = None
     api_proxy_url = None
-    starter = starter_api
     log = Logger()
     schedule = Schedule()
     worker = None
@@ -96,8 +94,6 @@ class MetaApp(object):
         create_logger(service_id=service_id, service_ns=service_ns, gcloud_log_host_port=gcloud_log_host_port, debug=self.debug)
 
         self.__read_developer_settings()
-
-        starter_api.init(self.starter_api_url)
 
         self.__default_headers = get_api_call_headers(self)
         self.MediaService = MediaService(self, self.__default_headers)
