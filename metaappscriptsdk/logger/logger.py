@@ -1,4 +1,3 @@
-# coding=utf-8
 import logging
 
 from metaappscriptsdk.logger import LOGGER_ENTITY

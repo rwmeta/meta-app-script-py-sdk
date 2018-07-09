@@ -3,6 +3,7 @@ from os import path
 
 import setuptools
 
+
 def parse_requirements(filename):
     """ load requirements from a pip requirements file """
     lineiter = (line.strip() for line in open(filename))
@@ -23,7 +24,6 @@ packages = [
     'metaappscriptsdk.services',
     'metaappscriptsdk.schedule',
     'metaappscriptsdk.feed',
-    'metaappscriptsdk.starter',
 ]
 
 install_reqs = parse_requirements('requirements.txt')
