@@ -2,9 +2,9 @@ import json
 from tempfile import NamedTemporaryFile
 
 SOURCE_FORMAT_EXTENSION = {
-    'CSV': 'csv',
-    'TSV': 'tsv',
-    'JSON_NEWLINE': 'json'
+    'CSV': '.csv',
+    'TSV': '.tsv',
+    'JSON_NEWLINE': '.json'
 }
 
 class FeedService:

@@ -26,7 +26,9 @@ class ExternalSystemService:
             {"id": ex_access_id}
         )
 
-        ex_access['token_info']['accessToken'] = decode_jwt(ex_access['token_info'].get('accessToken'), self.__crypt_params['secureKey'])
-        ex_access['token_info']['refreshToken'] = decode_jwt(ex_access['token_info'].get('refreshToken'), self.__crypt_params['secureKey'])
+        ex_access['token_info']['accessToken'] = \
+            decode_jwt(ex_access.get('token_info', {}).get('accessToken'), self.__crypt_params['secureKey'])
+        ex_access['token_info']['refreshToken'] = \
+            decode_jwt(ex_access.get('token_info', {}).get('refreshToken'), self.__crypt_params['secureKey'])
 
         return ex_access
