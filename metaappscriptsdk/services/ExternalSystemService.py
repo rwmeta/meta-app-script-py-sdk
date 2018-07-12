@@ -1,7 +1,6 @@
 from ..utils import decode_jwt
 
 
-
 class ExternalSystemService:
     def __init__(self, app, default_headers):
         """
@@ -18,17 +17,23 @@ class ExternalSystemService:
     def get_access(self, ex_access_id):
         ex_access = self.__metadb.one(
             """
-            SELECT token_info
-                 , form_data 
-              FROM meta.ex_access 
-             WHERE id=:id::uuid
+            SELECT
+                ex_system_id, 
+                login, 
+                token_info,
+                form_data 
+            FROM meta.ex_access 
+            WHERE id=:id::uuid
             """,
             {"id": ex_access_id}
         )
 
-        ex_access['token_info']['accessToken'] = \
-            decode_jwt(ex_access.get('token_info', {}).get('accessToken'), self.__crypt_params['secureKey'])
-        ex_access['token_info']['refreshToken'] = \
-            decode_jwt(ex_access.get('token_info', {}).get('refreshToken'), self.__crypt_params['secureKey'])
+        token_info_ = ex_access.get('token_info')
+
+        if token_info_ and token_info_.get('accessToken'):
+            ex_access['token_info']['accessToken'] = decode_jwt(token_info_.get('accessToken'), self.__crypt_params['secureKey'])
+
+        if token_info_ and token_info_.get('refreshToken'):
+            ex_access['token_info']['refreshToken'] = decode_jwt(token_info_.get('refreshToken'), self.__crypt_params['secureKey'])
 
         return ex_access
