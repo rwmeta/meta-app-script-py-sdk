@@ -30,8 +30,6 @@ class Worker:
             return
 
         log = self.__app.log
-        log.info(u'Старт')
-        begin_time = time.time()
         try:
             log.set_entity("session_id", tasks[0].get("sessionId"))
             if resolver_type == 'multiple':
@@ -48,8 +46,6 @@ class Worker:
         except Exception as e:
             log.critical(u'Воркер упал из-за неожиданного исключения', {"e": e})
             os._exit(1)
-        finally:
-            log.info(u'Стоп', {"seconds": int(time.time() - begin_time)})
 
     def __get_tasks(self):
         tasks = []
