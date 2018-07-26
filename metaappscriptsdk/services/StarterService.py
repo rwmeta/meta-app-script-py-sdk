@@ -79,7 +79,10 @@ class StarterService:
         :return: dict
         """
         if self.__app.starter_api_url == 'http://STUB_URL':
-            self.log.info(u'STARTER CLIENT DEV MODE Задача условно поставлена')
+            self.log.info('STARTER DEV. Задача условно поставлена', {
+                "service_id": service_id,
+                "data": data,
+            })
             return
 
         task = {"serviceId": service_id, "data": data}

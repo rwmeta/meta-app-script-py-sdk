@@ -13,6 +13,14 @@ class DbQueryService:
         self.__options = options
 
     def update(self, command, params=None):
+        """
+        Запросы на INSERT, UPDATE, DELETE и пр. не возвращающие результата должны выполняться через этот метод
+        Исключение такие запросы с RETURNING для PostgreSQL
+
+        :param command: SQL запрос
+        :param params: Параметры для prepared statements
+        :rtype: object DataResult
+        """
         return self.__app.api_call("DbQueryService", "update", locals(), self.__options)
 
     def query(self, command, params=None):
@@ -23,9 +31,9 @@ class DbQueryService:
 
         > db.query('SELECT * FORM users WHERE id=:id', {"id":MY_USER_ID})
 
-        :rtype: object DataResult
         :param command: SQL запрос
         :param params: Параметры для prepared statements
+        :rtype: object DataResult
         """
         return self.__app.api_call("DbQueryService", "query", locals(), self.__options)
 
