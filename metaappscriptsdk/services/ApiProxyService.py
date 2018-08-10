@@ -59,7 +59,7 @@ class ApiProxyService:
         # РКН блокировки вызывают ошибку SSL
         retry_request_substr_variants.append("TLSV1_ALERT_ACCESS_DENIED")
 
-        if resp.status_code in [502, 503]:
+        if resp.status_code in [502, 503, 504]:
             raise RetryHttpRequestError(resp.text)
 
         if resp.status_code >= 400:

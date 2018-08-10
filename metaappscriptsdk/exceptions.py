@@ -52,7 +52,7 @@ class DbQueryError(SDKError):
 
 class RetryHttpRequestError(SDKError):
     """
-    Невозможность повторного запроса (HTTP 502, 503)
+    Невозможность повторного запроса (HTTP 502, 503, 504)
     """
     pass
 
