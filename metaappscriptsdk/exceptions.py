@@ -1,65 +1,71 @@
-class AuthError(Exception):
-    def __init__(self, request):
-        self.request = request
-
-    def __str__(self):
-        return repr(self.request)
+# Более подробное описание в документации по ошибкам что в каком случае использовать
 
 
-class ServerError(Exception):
-    def __init__(self, request):
-        self.request = request
-
-    def __str__(self):
-        return repr(self.request)
-
-
-class NoContentError(Exception):
-    def __init__(self, request):
-        self.request = request
-
-    def __str__(self):
-        return repr(self.request)
-
-
-class RequestError(Exception):
-    def __init__(self, request):
-        self.request = request
-
-    def __str__(self):
-        return repr(self.request)
-
-
-class UnexpectedError(Exception):
-    def __init__(self, request):
-        self.request = request
-
-    def __str__(self):
-        return repr(self.request)
-
-
-class DbQueryError(Exception):
-    def __init__(self, error):
-        self.error = error
-
-    def __str__(self):
-        return repr(self.error)
-
-
-class UnexpectedResponseError(Exception):
+class SDKError(Exception):
+    """
+    Корневая ошибка для SDK
+    """
     pass
 
 
-class RetryHttpRequestError(Exception):
-    def __init__(self, err_details):
-        self.err_details = err_details
+class AuthError(SDKError):
+    """
+    Невозможно авторизоваться (HTTP 401)
+    """
+    pass
 
 
-class ApiProxyError(Exception):
-    def __init__(self, err_details):
-        self.err_details = err_details
+class ServerError(SDKError):
+    """
+    Сервер ответил ошибкой (HTTP >500)
+    """
+    pass
 
 
-class EndOfTriesError(Exception):
-    def __init__(self, err_details=None):
-        self.err_details = err_details
+class NoContentError(SDKError):
+    """
+    Нет содержимого (HTTP 204)
+    """
+    pass
+
+
+class RequestError(SDKError):
+    """
+    Ошибка исполнения запроса(HTTP >400)
+    """
+    pass
+
+
+class UnexpectedError(SDKError):
+    """
+    Непредвиденная ошибка (HTTP other)
+    """
+    pass
+
+
+class DbQueryError(SDKError):
+    """
+    Ошибка работы с базой данных
+    """
+    pass
+
+
+class RetryHttpRequestError(SDKError):
+    """
+    Невозможность повторного запроса (HTTP 502, 503)
+    """
+    pass
+
+
+class ApiProxyError(SDKError):
+    """
+    Ошибка работы с прокси
+    """
+    pass
+
+
+class EndOfTriesError(SDKError):
+    """
+    Достигнут лимит колличества повторов запроса
+    """
+    pass
