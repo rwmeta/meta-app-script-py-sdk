@@ -6,7 +6,7 @@ from os.path import expanduser
 
 import requests
 
-from metaappscriptsdk.exceptions import UnexpectedResponseError, DbQueryError, ServerError
+from metaappscriptsdk.exceptions import UnexpectedError, DbQueryError, ServerError
 from metaappscriptsdk.logger import create_logger, eprint
 from metaappscriptsdk.logger.bulk_logger import BulkLogger
 from metaappscriptsdk.logger.logger import Logger
@@ -205,7 +205,7 @@ class MetaApp(object):
                         if 'details' in decoded_resp['error']:
                             eprint(decoded_resp['error']['details'])
                         raise DbQueryError(decoded_resp['error'])
-                    raise UnexpectedResponseError()
+                    raise UnexpectedError()
                 else:
                     process_meta_api_error_code(resp.status_code, request, resp.text)
             except (requests.exceptions.ConnectionError, ConnectionError, TimeoutError) as e:

@@ -44,11 +44,12 @@ class ApiProxyService:
                 self.check_err(resp, analyze_json_error_param=analyze_json_error_param, retry_request_substr_variants=retry_request_substr_variants)
                 return resp
             except RetryHttpRequestError as e:
-                self.__app.log.warning("Sleep retry query: " + str(e.err_details) if e.err_details else "", log_ctx)
+                self.__app.log.warning("Sleep retry query: " + str(e), log_ctx)
                 time.sleep(20)
         raise EndOfTriesError("Api of api proxy tries request")
 
-    def check_err(self, resp, analyze_json_error_param=False, retry_request_substr_variants=None):
+    @staticmethod
+    def check_err(resp, analyze_json_error_param=False, retry_request_substr_variants=None):
         """
         :type retry_request_substr_variants: list Список вхождений строк, при налиции которых в ошидке апи будет произведен повторный запрос к апи
         """
@@ -58,7 +59,7 @@ class ApiProxyService:
         # РКН блокировки вызывают ошибку SSL
         retry_request_substr_variants.append("TLSV1_ALERT_ACCESS_DENIED")
 
-        if resp.status_code in [502, 503, 503]:
+        if resp.status_code in [502, 503, 504]:
             raise RetryHttpRequestError(resp.text)
 
         if resp.status_code >= 400:
