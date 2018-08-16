@@ -3,11 +3,7 @@ import atexit
 import logging
 import sys
 import traceback
-import socket
 
-from logstash import formatter as logstash_formatter
-from logging.handlers import SocketHandler
-from logstash import formatter
 from fluent import handler
 import metaappscriptsdk
 
@@ -23,7 +19,7 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def create_logger(service_id=None, service_ns=None, gcloud_log_host_port=None, debug=True):
+def create_logger(service_id=None, service_ns=None, build_num=None, gcloud_log_host_port=None, debug=True):
     if not service_id:
         service_id = 'unknown'
 
@@ -41,8 +37,14 @@ def create_logger(service_id=None, service_ns=None, gcloud_log_host_port=None, d
         if len(gcloud_logs_parts) != 2:
             raise ValueError("GCLOUD_LOG_HOST_PORT задан неправильно. Проверьте правильность написания HOST:PORT")
 
-        h = handler.FluentHandler(service_ns + '.' + service_id, host=gcloud_logs_parts[0], port=int(gcloud_logs_parts[1]))
-        h.setFormatter(GCloudFormatter())
+        service = service_ns + '.' + service_id
+        h = handler.FluentHandler(service, host=gcloud_logs_parts[0], port=int(gcloud_logs_parts[1]))
+
+        g_cloud_formatter = GCloudFormatter()
+        g_cloud_formatter.service = service
+        g_cloud_formatter.build_num = build_num
+        h.setFormatter(g_cloud_formatter)
+
         root_logger.addHandler(h)
 
         def exit_handler():
@@ -53,19 +55,56 @@ def create_logger(service_id=None, service_ns=None, gcloud_log_host_port=None, d
         atexit.register(exit_handler)
 
 
+def prepare_errors(record):
+    dict__ = record.__dict__
+
+    dict__.setdefault('context', {})
+    context = dict__.get('context')
+    context.update(LOGGER_ENTITY)
+
+    try:
+        if record.levelno >= 40:
+            # Ошибки и выше готовим для Google Cloud ErrorReporting
+            # https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorContext
+            exc_type, exc_value, exc_tb = sys.exc_info()
+            a = traceback.extract_tb(exc_tb)
+            first_ex = a[-1]
+            report_location = {'filePath': first_ex.filename, 'functionName': first_ex.name, 'lineNumber': first_ex.lineno}
+            context.update({
+                'reportLocation': report_location,
+            })
+    except Exception as ignore:
+        pass
+
+    ex = context.get("e")
+    if ex:
+        context.update({
+            'e': {
+                'class': str(ex.__class__),
+                'message': str(ex),
+                'trace': str(traceback.format_exc()),
+            }}
+        )
+    return context
+
+
 class GCloudFormatter(handler.FluentRecordFormatter, object):
+    service = None
+    build_num = None
+
     def format(self, record):
         # Create message dict
         context = record.context if hasattr(record, 'context') else {}
         context.update(metaappscriptsdk.logger.LOGGER_ENTITY)
-
-        if record.exc_info:
-            context.update(self.formatException(record))
-
+        context.update(prepare_errors(record))
         message = {
             "message": record.getMessage(),
             "context": context,
-            "severity": record.levelname
+            "severity": record.levelname,
+            "serviceContext": {
+                "service": self.service,
+                "version": self.build_num
+            }
         }
         return message
 

@@ -91,7 +91,7 @@ class MetaApp(object):
         service_id = os.environ.get('SERVICE_ID', "local_debug_serivce")
         self.build_num = os.environ.get('BUILD_NUM', '0')
         self.service_id = service_id
-        create_logger(service_id=service_id, service_ns=service_ns, gcloud_log_host_port=gcloud_log_host_port, debug=self.debug)
+        create_logger(service_id=service_id, service_ns=service_ns, build_num=self.build_num, gcloud_log_host_port=gcloud_log_host_port, debug=self.debug)
 
         self.__read_developer_settings()
 
