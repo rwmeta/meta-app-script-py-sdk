@@ -80,7 +80,7 @@ def prepare_errors(record):
     if ex:
         context.update({
             'e': {
-                'class': str(ex.__class__),
+                'class': str(type(ex).__name__),
                 'message': str(ex),
                 'trace': str(traceback.format_exc()),
             }}
@@ -121,7 +121,7 @@ class GCloudFormatter(handler.FluentRecordFormatter, object):
 
         return {
             'e': {
-                'class': str(exc_type.__name__),  # ZeroDivisionError
+                'class': str(type(exc_type).__name__),  # ZeroDivisionError
                 'message': str(exc_message),  # integer division or modulo by zero
                 'trace': list(traceback.format_tb(trace)),
             }
@@ -140,7 +140,7 @@ class StdoutFormatter(logging.Formatter, object):
         ex = context.get("e")
         if ex:
             context.update({'e': {
-                'class': str(ex.__class__),
+                'class': str(type(ex).__name__),
                 'message': str(ex),
                 'trace': str(traceback.format_exc()),
             }})
