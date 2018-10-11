@@ -35,7 +35,7 @@ class StarterService:
             "result_data": json.dumps(task['result_data'])
         })
 
-    def await_task(self, task_id, service_id, callback_fn, sleep_sec=15):
+    def await_task(self, task_id, service_id, callback_fn=None, sleep_sec=15):
         """
         Подождать выполнения задачи запускатора
 
@@ -65,8 +65,10 @@ class StarterService:
                 break
 
             is_finish = task_info['status'] != 'NEW' and task_info['status'] != 'PROCESSING'
-            # Уведомляем вызывающего
-            callback_fn(task_info, is_finish)
+
+            if callback_fn:
+                # Уведомляем вызывающего
+                callback_fn(task_info, is_finish)
 
             if is_finish:
                 break
