@@ -41,7 +41,7 @@ class StarterService:
 
         :param task_id: ID задачи, за которой нужно следить
         :param service_id: ID сервиса
-        :param callback_fn: Функция обратного вызова, в нее будет передаваться task_info
+        :param callback_fn: Функция обратного вызова, в нее будет передаваться task_info и is_finish как признак, что обработка завершена
         :param sleep_sec: задержка между проверкой по БД. Не рекомендуется делать меньше 10, так как это может очень сильно ударить по производительности БД
         :return: void
         """
@@ -64,10 +64,11 @@ class StarterService:
             if task_info is None:
                 break
 
+            is_finish = task_info['status'] != 'NEW' and task_info['status'] != 'PROCESSING'
             # Уведомляем вызывающего
-            callback_fn(task_info)
+            callback_fn(task_info, is_finish)
 
-            if task_info['status'] != 'NEW' and task_info['status'] != 'PROCESSING':
+            if is_finish:
                 break
 
     def submit(self, service_id: str, data: dict = None):
