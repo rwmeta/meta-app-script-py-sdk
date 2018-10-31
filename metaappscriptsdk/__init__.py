@@ -2,15 +2,14 @@ import json
 import os
 import sys
 import time
-from os.path import expanduser
 
 import requests
 
 from metaappscriptsdk.exceptions import UnexpectedError, DbQueryError, ServerError
+from metaappscriptsdk.internal import read_developer_settings
 from metaappscriptsdk.logger import create_logger, eprint
 from metaappscriptsdk.logger.bulk_logger import BulkLogger
 from metaappscriptsdk.logger.logger import Logger
-from metaappscriptsdk.schedule.Schedule import Schedule
 from metaappscriptsdk.services import get_api_call_headers, process_meta_api_error_code
 from metaappscriptsdk.services.ApiProxyService import ApiProxyService
 from metaappscriptsdk.services.DbQueryService import DbQueryService
@@ -36,7 +35,6 @@ class MetaApp(object):
     meta_url = None
     api_proxy_url = None
     log = Logger()
-    schedule = Schedule()
     worker = None
 
     # Будет поставляться в конец UserAgent
@@ -148,23 +146,9 @@ class MetaApp(object):
         При этом переменная окружения приоритетнее
         :return:
         """
-        dev_key_path = "/.rwmeta/developer_settings.json"
-        is_windows = os.name == "nt"
-        if is_windows:
-            dev_key_path = dev_key_path.replace("/", "\\")
-        dev_key_full_path = expanduser("~") + dev_key_path
-        if os.path.isfile(dev_key_full_path):
-            with open(dev_key_full_path, 'r') as myfile:
-                self.developer_settings = json.loads(myfile.read())
-
-        env_developer_settings = os.environ.get('META_SERVICE_ACCOUNT_SECRET', None)
-        if not env_developer_settings:
-            env_developer_settings = os.environ.get('X-META-Developer-Settings', None)
-        if env_developer_settings:
-            self.developer_settings = json.loads(env_developer_settings)
-
+        self.developer_settings = read_developer_settings()
         if not self.developer_settings:
-            self.log.warning(u"НЕ УСТАНОВЛЕНЫ настройки разработчика, это может приводить к проблемам в дальнейшей работе!")
+            self.log.warning("НЕ УСТАНОВЛЕНЫ настройки разработчика, это может приводить к проблемам в дальнейшей работе!")
 
     def api_call(self, service, method, data, options):
         """
@@ -192,10 +176,6 @@ class MetaApp(object):
 
         for try_idx in range(20):
             try:
-                # Пока непонятно почему частенько получаем ошибку:
-                # Failed to establish a new connection: [Errno 110] Connection timed out',))
-                # Пока пробуем делать доп. запросы
-                # Так же жестко указываем timeout-ы
                 resp = requests.post(**request)
                 if resp.status_code == 200:
                     decoded_resp = json.loads(resp.text)
@@ -251,21 +231,9 @@ class MetaApp(object):
 
         for try_idx in range(20):
             try:
-                # Пока непонятно почему частенько получаем ошибку:
-                # Failed to establish a new connection: [Errno 110] Connection timed out',))
-                # Пока пробуем делать доп. запросы
-                # Так же жестко указываем timeout-ы
-                # resp = requests.post(**request)
                 resp = requests.request(http_method, **request)
                 if resp.status_code == 200:
                     return resp
-                    # if 'data' in decoded_resp:
-                    #     return decoded_resp['data'][method]
-                    # if 'error' in decoded_resp:
-                    #     if 'details' in decoded_resp['error']:
-                    #         eprint(decoded_resp['error']['details'])
-                    #     raise DbQueryError(decoded_resp['error'])
-                    # raise UnexpectedResponseError()
                 else:
                     process_meta_api_error_code(resp.status_code, request, resp.text)
             except (requests.exceptions.ConnectionError, ConnectionError, TimeoutError) as e:
