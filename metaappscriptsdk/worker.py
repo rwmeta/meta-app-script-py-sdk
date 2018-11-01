@@ -1,10 +1,12 @@
 import json
 import os
 
-import time
-
 
 class Worker:
+    """
+    Класс для обработки фоновых задач на запускаторе
+    """
+
     def __init__(self, app, stdin):
         """
         :type app: metaappscriptsdk.MetaApp
